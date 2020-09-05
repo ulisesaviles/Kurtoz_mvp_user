@@ -1,21 +1,57 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import "react-native-gesture-handler";
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+// import { StyleSheet, Platform } from "react-native";
+
+import Home from "./screens/HomeScreen";
+import BuscarScreen from "./screens/BuscarScreen";
+import Ordenes from "./screens/OrdenesScreen";
+import PerfilScreen from "./screens/PerfilScreen";
+const Tab = createBottomTabNavigator();
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            if (route.name === "Inicio") {
+              return <MaterialIcons name={"home"} size={size} color={color} />;
+            } else if (route.name === "Buscar") {
+              return (
+                <MaterialIcons name={"search"} size={size} color={color} />
+              );
+            } else if (route.name === "Órdenes") {
+              return (
+                <MaterialIcons name={"receipt"} size={size} color={color} />
+              );
+            } else if (route.name === "Cuenta") {
+              return (
+                <MaterialIcons
+                  name={"account-circle"}
+                  size={size}
+                  color={color}
+                />
+              );
+            }
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: "black",
+          inactiveTintColor: "gray",
+        }}
+      >
+        <Tab.Screen name="Inicio" component={Home} />
+        <Tab.Screen name="Buscar" component={BuscarScreen} />
+        <Tab.Screen name="Órdenes" component={Ordenes} />
+        <Tab.Screen name="Cuenta" component={PerfilScreen} />
+      </Tab.Navigator>
+      <StatusBar style={"dark"} />
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// const styles = StyleSheet.create({});
