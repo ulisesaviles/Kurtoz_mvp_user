@@ -7,13 +7,23 @@ import {
   TouchableOpacity,
   Button,
   SafeAreaView,
+  ScrollView,
 } from "react-native";
+import Restaurant_medium from "./Restaurant_medium";
 
 const Ordenes_compo = () => {
   return (
     <SafeAreaView style={styles.SafeAreaView_}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Órdenes</Text>
+      </View>
       <View style={styles.container}>
-        <Text style={{ alignSelf: "center", fontSize: 50 }}>Órdenes</Text>
+        <ScrollView>
+          <View style={styles.itemsContainer}>
+            <Restaurant_medium />
+            <Restaurant_medium />
+          </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -29,6 +39,30 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "rgb(240,240,240)",
     justifyContent: "space-around",
+    // alignItems: "center",
+  },
+  header: {
+    backgroundColor: "rgb(255,255,255)",
+    height: "10%",
+    justifyContent: "center",
+  },
+  HScrollContainer: {
+    marginTop: "5%",
+    backgroundColor: "rgb(245, 245, 245)",
+  },
+  title: {
+    marginLeft: "12%",
+    fontSize: 40,
+    fontWeight: "500",
+  },
+  HScrollTitle: {
+    fontSize: 25,
+    marginLeft: "5%",
+    marginBottom: "2%",
+    fontWeight: "500",
+  },
+  itemsContainer: {
+    alignItems: "center",
   },
 });
 
