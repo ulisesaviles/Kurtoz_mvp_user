@@ -3,27 +3,38 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity,
-  Button,
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import Food_medium from "./Food_medium";
+import Cart_FoodMini from "./Cart_FoodMini";
+import DeliveryDetails from "./DeliveryDetails";
 
 const Cart_compo = () => {
   return (
     <SafeAreaView style={styles.SafeAreaView_}>
       <View style={styles.header}>
-        <Text style={styles.title}>Shopping Cart</Text>
+        <Text style={styles.title}>Carrito</Text>
       </View>
       <View style={styles.container}>
-        <ScrollView>
-          <View style={styles.itemsContainer}>
-            <Food_medium />
-            <Food_medium />
+        <View style={styles.scrollContainer}>
+          <ScrollView>
+            <DeliveryDetails />
+            <View style={styles.itemsContainer}>
+              <View style={styles.tuOrdenContainer}>
+                <Text style={styles.tuOrden}>Tu Orden</Text>
+              </View>
+              <Cart_FoodMini />
+              <Cart_FoodMini />
+              <Cart_FoodMini />
+            </View>
+          </ScrollView>
+        </View>
+        <TouchableOpacity>
+          <View style={styles.addToCartBtn}>
+            <Text style={styles.addToCart}>Completar Orden</Text>
           </View>
-        </ScrollView>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -36,32 +47,47 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    height: "100%",
+    height: "89%",
     backgroundColor: "rgb(240,240,240)",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
   },
   header: {
     backgroundColor: "rgb(255,255,255)",
     height: "10%",
     justifyContent: "center",
   },
-  HScrollContainer: {
-    marginTop: "5%",
-    backgroundColor: "rgb(245, 245, 245)",
-  },
   title: {
     marginLeft: "12%",
     fontSize: 40,
     fontWeight: "500",
   },
-  HScrollTitle: {
-    fontSize: 25,
-    marginLeft: "5%",
-    marginBottom: "2%",
-    fontWeight: "500",
-  },
   itemsContainer: {
     alignItems: "center",
+  },
+  addToCartBtn: {
+    backgroundColor: "rgb(0,0,0)",
+    padding: 10,
+    width: "95%",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  addToCart: {
+    color: "rgb(255, 255, 255)",
+    fontSize: 22,
+    fontWeight: "600",
+  },
+  scrollContainer: {
+    height: "93%",
+  },
+  tuOrdenContainer: {
+    backgroundColor: "rgb(255, 255, 255)",
+    width: "100%",
+    alignItems: "center",
+    marginTop: "2%",
+  },
+  tuOrden: {
+    fontSize: 30,
+    fontWeight: "400",
   },
 });
 

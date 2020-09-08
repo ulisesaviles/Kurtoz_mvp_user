@@ -38,7 +38,11 @@ const Food_compo = ({ navigation }) => {
           <OpcionMini />
           <OpcionMini />
           <OpcionMini />
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Carrito");
+            }}
+          >
             <View style={styles.addToCartBtn}>
               <Text style={styles.addToCart}>Add to cart</Text>
             </View>
