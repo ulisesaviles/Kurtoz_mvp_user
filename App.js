@@ -3,12 +3,11 @@ import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-// import { StyleSheet, Platform } from "react-native";
-
 import Home from "./screens/HomeScreen";
 import BuscarScreen from "./screens/BuscarScreen";
 import Ordenes from "./screens/OrdenesScreen";
 import PerfilScreen from "./screens/PerfilScreen";
+import CartScreen from "./screens/CartScreen";
 const Tab = createBottomTabNavigator();
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -24,9 +23,13 @@ export default function App() {
               return (
                 <MaterialIcons name={"search"} size={size} color={color} />
               );
-            } else if (route.name === "Órdenes") {
+            } else if (route.name === "Carrito") {
               return (
-                <MaterialIcons name={"receipt"} size={size} color={color} />
+                <MaterialIcons
+                  name={"shopping-cart"}
+                  size={size}
+                  color={color}
+                />
               );
             } else if (route.name === "Cuenta") {
               return (
@@ -46,7 +49,7 @@ export default function App() {
       >
         <Tab.Screen name="Inicio" component={Home} />
         <Tab.Screen name="Buscar" component={BuscarScreen} />
-        <Tab.Screen name="Órdenes" component={Ordenes} />
+        <Tab.Screen name="Carrito" component={CartScreen} />
         <Tab.Screen name="Cuenta" component={PerfilScreen} />
       </Tab.Navigator>
       <StatusBar style={"dark"} />

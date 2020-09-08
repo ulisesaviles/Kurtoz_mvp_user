@@ -11,11 +11,11 @@ import {
 } from "react-native";
 import Food_medium from "./Food_medium";
 
-const Ordenes_compo = () => {
+const Cart_compo = () => {
   return (
     <SafeAreaView style={styles.SafeAreaView_}>
       <View style={styles.header}>
-        <Text style={styles.title}>Órdenes</Text>
+        <Text style={styles.title}>Shopping Cart</Text>
       </View>
       <View style={styles.container}>
         <ScrollView>
@@ -39,11 +39,10 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "rgb(240,240,240)",
     justifyContent: "space-around",
-    // alignItems: "center",
   },
   header: {
     backgroundColor: "rgb(255,255,255)",
-    height: "7%",
+    height: "10%",
     justifyContent: "center",
   },
   HScrollContainer: {
@@ -51,8 +50,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(245, 245, 245)",
   },
   title: {
-    marginLeft: "25%",
-    fontSize: 35,
+    marginLeft: "12%",
+    fontSize: 40,
     fontWeight: "500",
   },
   HScrollTitle: {
@@ -66,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Ordenes_compo;
+export default Cart_compo;

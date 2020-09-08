@@ -5,10 +5,11 @@ import { StyleSheet, View } from "react-native";
 
 import Perfil_compo from "../components/Perfil_compo";
 import EditAccount from "../components/EditAccount";
-import Favourites from "../components/Favourites";
+import Favorites from "../components/Favourites";
 import PaymentMethod from "../components/PaymentMethod";
 import Help from "../components/Help";
 import About from "../components/About";
+import Ordenes_compo from "../components/Ordenes_compo";
 
 const Stack = createStackNavigator();
 
@@ -22,7 +23,16 @@ const PerfilScreen = () => {
           options={{ headerTransparent: "true", title: "" }}
         />
         <Stack.Screen name="EditAccount" component={EditAccount} />
-        <Stack.Screen name="Favourites" component={Favourites} />
+        <Stack.Screen
+          name="Tus Favoritos"
+          component={Favorites}
+          options={{ headerTransparent: "true", title: "" }}
+        />
+        <Stack.Screen
+          name="Tus Órdenes"
+          component={Ordenes_compo}
+          options={{ headerTransparent: "true", title: "" }}
+        />
         <Stack.Screen name="PaymentMethod" component={PaymentMethod} />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="About" component={About} />
