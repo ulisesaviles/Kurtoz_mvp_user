@@ -9,7 +9,7 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import Restaurant_medium from "./Restaurant_medium";
+import Food_medium from "./Food_medium";
 
 const Ordenes_compo = () => {
   return (
@@ -20,8 +20,8 @@ const Ordenes_compo = () => {
       <View style={styles.container}>
         <ScrollView>
           <View style={styles.itemsContainer}>
-            <Restaurant_medium />
-            <Restaurant_medium />
+            <Food_medium />
+            <Food_medium />
           </View>
         </ScrollView>
       </View>

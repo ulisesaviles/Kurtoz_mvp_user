@@ -2,8 +2,9 @@ import React from "react";
 import "react-native-gesture-handler";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet, View } from "react-native";
-import DisplayMenu from "../components/DisplayMenu";
 import Buscar_compo from "../components/Buscar_compo";
+import Restaurant_compo from "../components/Restaurant_compo";
+import Food_compo from "../components/Food_compo";
 const Stack = createStackNavigator();
 
 const BuscarScreen = () => {
@@ -15,7 +16,16 @@ const BuscarScreen = () => {
           component={Buscar_compo}
           options={{ headerTransparent: "true", title: "" }}
         />
-        <Stack.Screen name="DisplayMenu" component={DisplayMenu} />
+        <Stack.Screen
+          name="Restaurant_compo"
+          component={Restaurant_compo}
+          options={{ headerTransparent: "true", title: "" }}
+        />
+        <Stack.Screen
+          name="Food_compo"
+          component={Food_compo}
+          options={{ headerTransparent: "true", title: "" }}
+        />
       </Stack.Navigator>
     </View>
   );

@@ -10,8 +10,9 @@ import {
   ScrollView,
 } from "react-native";
 import Restaurant_medium from "./Restaurant_medium";
+import HomeHorizontalScroll from "./HomeHorizontalScroll";
 
-const Home_compo = () => {
+const Home_compo = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.SafeAreaView_}>
       <View style={styles.header}>
@@ -19,41 +20,11 @@ const Home_compo = () => {
       </View>
       <View style={styles.container}>
         <ScrollView>
-          <View style={styles.HScrollContainer}>
-            <Text style={styles.HScrollTitle}>Recomendaciones: </Text>
-            <ScrollView horizontal>
-              <Restaurant_medium />
-              <Restaurant_medium />
-            </ScrollView>
-          </View>
-          <View style={styles.HScrollContainer}>
-            <Text style={styles.HScrollTitle}>Recomendaciones: </Text>
-            <ScrollView horizontal>
-              <Restaurant_medium />
-              <Restaurant_medium />
-            </ScrollView>
-          </View>
-          <View style={styles.HScrollContainer}>
-            <Text style={styles.HScrollTitle}>Recomendaciones: </Text>
-            <ScrollView horizontal>
-              <Restaurant_medium />
-              <Restaurant_medium />
-            </ScrollView>
-          </View>
-          <View style={styles.HScrollContainer}>
-            <Text style={styles.HScrollTitle}>Recomendaciones: </Text>
-            <ScrollView horizontal>
-              <Restaurant_medium />
-              <Restaurant_medium />
-            </ScrollView>
-          </View>
-          <View style={styles.HScrollContainer}>
-            <Text style={styles.HScrollTitle}>Recomendaciones: </Text>
-            <ScrollView horizontal>
-              <Restaurant_medium />
-              <Restaurant_medium />
-            </ScrollView>
-          </View>
+          <HomeHorizontalScroll />
+          <HomeHorizontalScroll />
+          <HomeHorizontalScroll />
+          <HomeHorizontalScroll />
+          <HomeHorizontalScroll />
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -77,21 +48,10 @@ const styles = StyleSheet.create({
     height: "10%",
     justifyContent: "center",
   },
-  HScrollContainer: {
-    marginTop: "5%",
-    backgroundColor: "rgb(245, 245, 245)",
-  },
   title: {
     marginLeft: "12%",
     fontSize: 40,
     fontWeight: "500",
-  },
-  HScrollTitle: {
-    fontSize: 25,
-    marginLeft: "5%",
-    marginBottom: "2%",
-    fontWeight: "500",
-    color: "rgb(40,40,40)",
   },
 });
 

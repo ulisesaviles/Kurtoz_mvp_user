@@ -23,7 +23,7 @@ const Buscar_compo = ({ navigation }) => {
             <View style={styles.logoContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("DisplayMenu", "Kurtoz");
+                  navigation.navigate("Restaurant_compo");
                 }}
               >
                 <Image
@@ -35,7 +35,7 @@ const Buscar_compo = ({ navigation }) => {
             <View style={styles.logoContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("DisplayMenu", "Kurtoz");
+                  navigation.navigate("Restaurant_compo");
                 }}
               >
                 <Image
@@ -47,7 +47,7 @@ const Buscar_compo = ({ navigation }) => {
             <View style={styles.logoContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("DisplayMenu", "Kurtoz");
+                  navigation.navigate("Restaurant_compo");
                 }}
               >
                 <Image
@@ -59,7 +59,7 @@ const Buscar_compo = ({ navigation }) => {
             <View style={styles.logoContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("DisplayMenu", "Kurtoz");
+                  navigation.navigate("Restaurant_compo");
                 }}
               >
                 <Image
@@ -71,7 +71,7 @@ const Buscar_compo = ({ navigation }) => {
             <View style={styles.logoContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("DisplayMenu", "Kurtoz");
+                  navigation.navigate("Restaurant_compo");
                 }}
               >
                 <Image
@@ -83,7 +83,7 @@ const Buscar_compo = ({ navigation }) => {
             <View style={styles.logoContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("DisplayMenu", "Kurtoz");
+                  navigation.navigate("Restaurant_compo");
                 }}
               >
                 <Image
