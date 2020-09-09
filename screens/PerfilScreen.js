@@ -10,6 +10,7 @@ import PaymentMethod from "../components/PaymentMethod";
 import Help from "../components/Help";
 import About from "../components/About";
 import Ordenes_compo from "../components/Ordenes_compo";
+import Food_compo from "../components/Food_compo";
 
 const Stack = createStackNavigator();
 
@@ -33,9 +34,18 @@ const PerfilScreen = () => {
           component={Ordenes_compo}
           options={{ headerTransparent: "true", title: "" }}
         />
-        <Stack.Screen name="PaymentMethod" component={PaymentMethod} />
+        <Stack.Screen
+          name="PaymentMethod"
+          component={PaymentMethod}
+          options={{ headerTransparent: "true", title: "" }}
+        />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="About" component={About} />
+        <Stack.Screen
+          name="Food_compo"
+          component={Food_compo}
+          options={{ headerTransparent: "true", title: "" }}
+        />
       </Stack.Navigator>
     </View>
   );

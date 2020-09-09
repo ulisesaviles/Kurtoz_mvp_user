@@ -39,6 +39,10 @@ export default function App() {
                   color={color}
                 />
               );
+            } else if (route.name === "Órdenes") {
+              return (
+                <MaterialIcons name={"receipt"} size={size} color={color} />
+              );
             }
           },
         })}
@@ -50,6 +54,7 @@ export default function App() {
         <Tab.Screen name="Inicio" component={Home} />
         <Tab.Screen name="Buscar" component={BuscarScreen} />
         <Tab.Screen name="Carrito" component={CartScreen} />
+        <Tab.Screen name="Órdenes" component={Ordenes} />
         <Tab.Screen name="Cuenta" component={PerfilScreen} />
       </Tab.Navigator>
       <StatusBar style={"dark"} />

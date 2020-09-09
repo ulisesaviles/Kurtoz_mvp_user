@@ -1,15 +1,6 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Button,
-  SafeAreaView,
-  ScrollView,
-} from "react-native";
-import Food_medium from "./Food_medium";
+import { StyleSheet, Text, View, SafeAreaView, ScrollView } from "react-native";
+import Cart_FoodMini from "./Cart_FoodMini";
 
 const Ordenes_compo = () => {
   return (
@@ -19,9 +10,16 @@ const Ordenes_compo = () => {
       </View>
       <View style={styles.container}>
         <ScrollView>
-          <View style={styles.itemsContainer}>
-            <Food_medium />
-            <Food_medium />
+          <View style={styles.ordenContainer}>
+            <View style={styles.tuOrdenContainer}>
+              <Text style={styles.tuOrden}>7/sep/20</Text>
+            </View>
+            <Cart_FoodMini />
+            <Cart_FoodMini />
+            <Cart_FoodMini />
+            <View style={styles.totalContainer}>
+              <Text style={styles.total}>Total: $ 360.00 MXN</Text>
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -51,7 +49,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(245, 245, 245)",
   },
   title: {
-    marginLeft: "25%",
+    marginLeft: "10%",
     fontSize: 35,
     fontWeight: "500",
   },
@@ -61,8 +59,29 @@ const styles = StyleSheet.create({
     marginBottom: "2%",
     fontWeight: "500",
   },
-  itemsContainer: {
+  ordenContainer: {
     alignItems: "center",
+  },
+  tuOrdenContainer: {
+    backgroundColor: "rgb(255, 255, 255)",
+    width: "100%",
+    alignItems: "center",
+    marginTop: "2%",
+    paddingTop: "3%",
+  },
+  tuOrden: {
+    fontSize: 30,
+    fontWeight: "400",
+  },
+  totalContainer: {
+    backgroundColor: "rgb(255, 255, 255)",
+    width: "100%",
+    paddingVertical: "3%",
+    paddingHorizontal: "5%",
+  },
+  total: {
+    fontSize: 18,
+    fontWeight: "500",
   },
 });
 

@@ -2,41 +2,37 @@ import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import "react-native-gesture-handler";
+import { MaterialIcons } from "@expo/vector-icons";
 
 function DeliveryDetails() {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity
-    // onPress={() => {
-    //   navigation.navigate("Food_compo");
-    // }}
-    >
-      <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <Text style={styles.FoodName}>Nieve de Vainilla</Text>
-          <View style={styles.extraIngredients}>
-            <View style={styles.extraIngredientContainer}>
-              <Text style={styles.extraPrice}>+ $20.00 MXN</Text>
-              <Text style={styles.extraIngredient}>Crema batida</Text>
-            </View>
-            <View style={styles.extraIngredientContainer}>
-              <Text style={styles.extraPrice}>+ $20.00 MXN</Text>
-              <Text style={styles.extraIngredient}>Crema batida</Text>
-            </View>
-            <View style={styles.extraIngredientContainer}>
-              <Text style={styles.extraPrice}>+ $20.00 MXN</Text>
-              <Text style={styles.extraIngredient}>Crema batida</Text>
-            </View>
-          </View>
-          <Text style={styles.Price}>$ 120.00 MXN</Text>
-        </View>
-        <Image
-          source={require("../Examples/kurtoz_nieve.jpg")}
-          style={styles.photo}
-        />
+    <View style={styles.container}>
+      <View style={styles.restaurantNameContainer}>
+        <Text style={styles.restaurantName}>Kurtoz</Text>
+        <View style={styles.titleSeparador} />
       </View>
-    </TouchableOpacity>
+      <TouchableOpacity
+      // onPress={() => {
+      //   navigation.navigate("Food_compo");
+      // }}
+      >
+        <View style={styles.directionContainer}>
+          <Image source={require("../Examples/map.jpg")} style={styles.photo} />
+          <View style={styles.directionTextContainer}>
+            <Text style={styles.dierctionP1}>Bahía de Ballenas #322</Text>
+            <Text style={styles.dierctionP2}>El Mirador, Tijuana, B.C.</Text>
+            <Text style={styles.dierctionP2}>Delivery</Text>
+            <Text style={styles.dierctionP2}>Add instructions</Text>
+          </View>
+        </View>
+        <View style={styles.deliveryTimeContainer}>
+          <MaterialIcons name="timer" size={18} color="rgb(0,0,0)" />
+          <Text style={styles.deliveryTime}>Delivery Time: 20-30 min</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -47,46 +43,50 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     paddingHorizontal: "8%",
     paddingVertical: "3%",
+  },
+  restaurantNameContainer: {
+    alignItems: "center",
+  },
+  restaurantName: {
+    fontSize: 40,
+    fontWeight: "300",
+  },
+  titleSeparador: {
+    backgroundColor: "rgb(0, 0, 0)",
+    height: 1,
+    width: "60%",
+    marginVertical: "10%",
+  },
+  directionContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
   },
   photo: {
-    width: 100,
     height: 100,
-    borderRadius: 10,
+    width: 100,
+    borderRadius: 5,
   },
-  extraIngredient: {
-    width: "100%",
-    marginBottom: "4%",
+  directionTextContainer: {
+    marginHorizontal: "5%",
   },
-  extraIngredients: {
+  dierctionP1: {
+    fontSize: 18,
+  },
+  dierctionP2: {
+    fontSize: 16,
     fontWeight: "300",
-    width: "100%",
+    marginTop: "2%",
   },
-  FoodName: {
-    fontSize: 20,
-    fontWeight: "400",
-    marginBottom: "5%",
-  },
-  textContainer: {
-    width: "65%",
-    height: "100%",
-    marginRight: "8%",
-  },
-  Price: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  extraIngredient: {
-    alignSelf: "flex-end",
-  },
-  extraIngredientContainer: {
-    fontWeight: "400",
+  deliveryTimeContainer: {
+    marginVertical: "5%",
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: "2%",
-    paddingLeft: "4%",
+    alignItems: "center",
+  },
+  deliveryTime: {
+    marginLeft: "2%",
+    fontSize: 18,
+    fontWeight: "400",
+    marginTop: "2%",
   },
 });
 

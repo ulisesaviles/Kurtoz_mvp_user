@@ -51,21 +51,6 @@ const Perfil = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("Tus Órdenes");
-            }}
-          >
-            <View style={styles.settingContainer}>
-              <MaterialIcons
-                style={styles.settingLogo}
-                name={"receipt"}
-                size={25}
-                color={"rgb(0,0,0)"}
-              />
-              <Text style={styles.settingTitle}>Tus Órdenes</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
               navigation.navigate("PaymentMethod");
             }}
           >

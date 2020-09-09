@@ -47,18 +47,18 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    height: "89%",
+    height: "95%",
     backgroundColor: "rgb(240,240,240)",
     justifyContent: "space-between",
   },
   header: {
     backgroundColor: "rgb(255,255,255)",
-    height: "10%",
+    height: "5%",
     justifyContent: "center",
+    alignItems: "center",
   },
   title: {
-    marginLeft: "12%",
-    fontSize: 40,
+    fontSize: 20,
     fontWeight: "500",
   },
   itemsContainer: {
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginTop: "2%",
+    paddingTop: "3%",
   },
   tuOrden: {
     fontSize: 30,
