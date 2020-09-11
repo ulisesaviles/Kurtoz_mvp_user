@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Button,
-  SafeAreaView,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, ScrollView } from "react-native";
 import Food_medium from "./Food_medium";
 
 const Favorites = () => {

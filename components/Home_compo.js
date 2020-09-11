@@ -1,15 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Button,
-  SafeAreaView,
-  ScrollView,
-} from "react-native";
-import Restaurant_medium from "./Restaurant_medium";
+import { StyleSheet, Text, View, SafeAreaView, ScrollView } from "react-native";
 import HomeHorizontalScroll from "./HomeHorizontalScroll";
 
 const Home_compo = ({ navigation }) => {

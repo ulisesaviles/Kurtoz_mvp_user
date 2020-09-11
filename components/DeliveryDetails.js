@@ -19,7 +19,13 @@ function DeliveryDetails() {
       // }}
       >
         <View style={styles.directionContainer}>
-          <Image source={require("../Examples/map.jpg")} style={styles.photo} />
+          <Image
+            source={{
+              uri:
+                "https://www.themeboy.com/wp-content/themes/themeboy/images/extensions/google-maps-screenshot.png",
+            }}
+            style={styles.photo}
+          />
           <View style={styles.directionTextContainer}>
             <Text style={styles.dierctionP1}>Bahía de Ballenas #322</Text>
             <Text style={styles.dierctionP2}>El Mirador, Tijuana, B.C.</Text>

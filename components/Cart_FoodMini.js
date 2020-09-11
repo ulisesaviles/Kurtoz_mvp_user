@@ -32,7 +32,10 @@ function Cart_FoodMini() {
           <Text style={styles.Price}>$ 120.00 MXN</Text>
         </View>
         <Image
-          source={require("../Examples/kurtoz_nieve.jpg")}
+          source={{
+            uri:
+              "https://scontent.ftij1-1.fna.fbcdn.net/v/t1.0-9/27858576_172626690015090_2321536906365458293_n.jpg?_nc_cat=106&_nc_sid=8bfeb9&_nc_eui2=AeE6-6KCW8trFvQxazSM4QEVvUI5v6I1YP29Qjm_ojVg_YDtO5jdy0dbUu7-EY1U01jsEj6eEsAMtg1vNlDi0orZ&_nc_ohc=DCKP55MdsHUAX9BGKN1&_nc_ht=scontent.ftij1-1.fna&oh=1269804a0024db38e16ba82f993fb37a&oe=5F814571",
+          }}
           style={styles.photo}
         />
       </View>

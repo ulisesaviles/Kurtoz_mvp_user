@@ -1,14 +1,6 @@
 import React from "react";
 import "react-native-gesture-handler";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Button,
-  SafeAreaView,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 const Help = ({ navigation }) => {
   return (

@@ -3,11 +3,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity,
-  Button,
   SafeAreaView,
-  ScrollView,
 } from "react-native";
 import TarjetaMini from "./TarjetaMini";
 

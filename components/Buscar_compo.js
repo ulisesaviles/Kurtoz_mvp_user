@@ -1,15 +1,7 @@
 import React from "react";
 import "react-native-gesture-handler";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Button,
-  SafeAreaView,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
+import RestaurantLogo_touchable from "./RestaurantLogo_touchable";
 
 const Buscar_compo = ({ navigation }) => {
   return (
@@ -20,78 +12,12 @@ const Buscar_compo = ({ navigation }) => {
       <View style={styles.scrollContainer}>
         <ScrollView>
           <View style={styles.itemsContainer}>
-            <View style={styles.logoContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Restaurant_compo");
-                }}
-              >
-                <Image
-                  source={require("../Examples/KurtozLogo.jpg")}
-                  style={styles.restaurantLogo}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.logoContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Restaurant_compo");
-                }}
-              >
-                <Image
-                  source={require("../Examples/KurtozLogo.jpg")}
-                  style={styles.restaurantLogo}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.logoContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Restaurant_compo");
-                }}
-              >
-                <Image
-                  source={require("../Examples/KurtozLogo.jpg")}
-                  style={styles.restaurantLogo}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.logoContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Restaurant_compo");
-                }}
-              >
-                <Image
-                  source={require("../Examples/KurtozLogo.jpg")}
-                  style={styles.restaurantLogo}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.logoContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Restaurant_compo");
-                }}
-              >
-                <Image
-                  source={require("../Examples/KurtozLogo.jpg")}
-                  style={styles.restaurantLogo}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.logoContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Restaurant_compo");
-                }}
-              >
-                <Image
-                  source={require("../Examples/KurtozLogo.jpg")}
-                  style={styles.restaurantLogo}
-                />
-              </TouchableOpacity>
-            </View>
+            <RestaurantLogo_touchable />
+            <RestaurantLogo_touchable />
+            <RestaurantLogo_touchable />
+            <RestaurantLogo_touchable />
+            <RestaurantLogo_touchable />
+            <RestaurantLogo_touchable />
           </View>
         </ScrollView>
       </View>
@@ -126,14 +52,6 @@ const styles = StyleSheet.create({
     alignContent: "space-around",
     flexDirection: "row",
     flexWrap: "wrap",
-  },
-  restaurantLogo: {
-    height: 157,
-    width: 157,
-    borderRadius: 15,
-  },
-  logoContainer: {
-    margin: "4%",
   },
 });
 

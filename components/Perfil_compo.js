@@ -24,7 +24,10 @@ const Perfil = ({ navigation }) => {
             <View style={styles.profileContainer}>
               <View style={styles.ppContainer}>
                 <Image
-                  source={require("../Examples/ProfilePhoto.jpg")}
+                  source={{
+                    uri:
+                      "https://scontent.ftij1-1.fna.fbcdn.net/v/t1.0-9/81383950_470288483681697_6573081785897320448_n.jpg?_nc_cat=100&_nc_sid=09cbfe&_nc_eui2=AeEATNOpqls28H2ysVHc4VQY9gTs0qIATfP2BOzSogBN892TtGRUCd2LCaqzdbugmzLYsYF3DsPU_zwwYpaTWYEN&_nc_ohc=vR8f5E0PrRIAX-I51KQ&_nc_ht=scontent.ftij1-1.fna&oh=14878a616e2932b30deb2fdb910c9bf6&oe=5F83024E",
+                  }}
                   style={styles.pp}
                 />
               </View>

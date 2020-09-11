@@ -2,16 +2,16 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-const Rating = () => {
+const Rating = (props) => {
   return (
     <View style={styles.ratingContainer}>
       <MaterialIcons
         style={styles.star}
         name={"star"}
         size={16}
-        color={"rgb(255,255,0)"}
+        color={"rgb(0,0,0)"}
       />
-      <Text style={styles.rating}>4.8</Text>
+      <Text style={styles.rating}>{props.rating}</Text>
     </View>
   );
 };

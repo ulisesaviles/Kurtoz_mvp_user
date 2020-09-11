@@ -14,7 +14,10 @@ const Restaurant_compo = ({ navigation }) => {
         <ScrollView>
           <View style={styles.imageContainer}>
             <Image
-              source={require("../Examples/Kurtoz_background.jpg")}
+              source={{
+                uri:
+                  "https://d1ralsognjng37.cloudfront.net/3caa881c-8d86-48fe-8801-46c14997ec6d",
+              }}
               style={styles.backgroundImage}
             />
           </View>
@@ -22,7 +25,7 @@ const Restaurant_compo = ({ navigation }) => {
             <Text style={styles.title}>Kurtoz Rolling Bakery Coffe</Text>
             <View style={styles.horizontalDescription}>
               <Text style={styles.category}>Cafetería y Crepas</Text>
-              <Rating />
+              <Rating rating="4.8" />
             </View>
             <View style={styles.horarioContainer}>
               <EvilIcons name="clock" size={16} color="black" />

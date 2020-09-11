@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Rating from "./Rating";
 
-function Restaurant_medium() {
+function Restaurant_medium(props) {
   const navigation = useNavigation();
 
   return (
@@ -14,13 +14,16 @@ function Restaurant_medium() {
     >
       <View style={styles.container}>
         <Image
-          source={require("../Examples/Kurtoz_background.jpg")}
+          source={{
+            uri:
+              "https://d1ralsognjng37.cloudfront.net/3caa881c-8d86-48fe-8801-46c14997ec6d",
+          }}
           style={styles.photo}
         />
         <View style={styles.descriptionContainer}>
           <View style={styles.horizontalAtributesContainer}>
-            <Text style={styles.restaurantName}>Kurtoz</Text>
-            <Rating />
+            <Text style={styles.restaurantName}>{props.restaurantName}</Text>
+            <Rating rating={4.8} />
           </View>
           <Text style={styles.restaurantCategory}>Café</Text>
           <Text style={styles.prepTime}>5 - 10 Min</Text>

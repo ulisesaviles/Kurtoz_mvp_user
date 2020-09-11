@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 
 import Perfil_compo from "../components/Perfil_compo";
 import EditAccount from "../components/EditAccount";
-import Favorites from "../components/Favourites";
+import Favorites from "../components/Favorites";
 import PaymentMethod from "../components/PaymentMethod";
 import Help from "../components/Help";
 import About from "../components/About";
