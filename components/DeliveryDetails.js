@@ -87,12 +87,12 @@ const styles = StyleSheet.create({
     marginVertical: "5%",
     flexDirection: "row",
     alignItems: "center",
+    marginTop: "5%",
   },
   deliveryTime: {
     marginLeft: "2%",
     fontSize: 18,
     fontWeight: "400",
-    marginTop: "2%",
   },
 });
 

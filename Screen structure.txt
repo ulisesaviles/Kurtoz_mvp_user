@@ -1,0 +1,22 @@
+Perfil
+	Edit account
+	Your favourites
+		Restaurants
+		Food
+	Help
+	About
+Buscar (map restaurants logos) - Search engine
+	Restaurant
+	Food
+	Cart
+
+Ordenes (map last 10 IDs)
+Home
+
+
+
+Componnets:
+	category small (for home)
+	restaurant small
+	restaurant medium
+	Food medium

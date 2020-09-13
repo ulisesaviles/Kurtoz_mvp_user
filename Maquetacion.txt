@@ -1,0 +1,4 @@
+Create an account (it has to be seemless)
+	Enter Email/Phone
+	Password
+	Set location
