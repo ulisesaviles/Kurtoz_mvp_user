@@ -19,7 +19,7 @@ const Cart_compo = () => {
       <View style={styles.container}>
         <View style={styles.scrollContainer}>
           <ScrollView>
-            <DeliveryDetails />
+            {/* <DeliveryDetails /> */}
             <View style={styles.itemsContainer}>
               <View style={styles.tuOrdenContainer}>
                 <Text style={styles.tuOrden}>Tu Orden</Text>
@@ -47,18 +47,18 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    height: "95%",
+    height: "89%",
     backgroundColor: "rgb(240,240,240)",
     justifyContent: "space-between",
   },
   header: {
     backgroundColor: "rgb(255,255,255)",
-    height: "5%",
+    height: "10%",
     justifyContent: "center",
-    alignItems: "center",
   },
   title: {
-    fontSize: 20,
+    marginLeft: "12%",
+    fontSize: 40,
     fontWeight: "500",
   },
   itemsContainer: {

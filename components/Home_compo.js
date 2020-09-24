@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,18 +8,21 @@ import {
   RefreshControl,
 } from "react-native";
 import HomeHorizontalScroll from "./HomeHorizontalScroll";
+import firebase from "../database/database";
 
 const Home_compo = ({ navigation }) => {
+  console.log(
+    "Holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  );
+  const [categories, setCategories] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
-
   const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-
     function wait(timeout) {
       return new Promise((resolve) => {
         setTimeout(resolve, timeout);
       });
     }
+    setRefreshing(true);
 
     wait(500).then(() => {
       setRefreshing(false);
@@ -27,23 +30,56 @@ const Home_compo = ({ navigation }) => {
     });
   }, [refreshing]);
 
-  var tagArray = [0, 1, 2, 3, 4];
-
   function randomizeArray(array) {
-    var states = [];
+    let copyOfArray = [];
+    let states = [];
     for (var i = 0; i < array.length; i++) {
       states.push(false);
+      copyOfArray.push(array[i]);
     }
     for (var i = 0; i < array.length; ) {
-      var pos = Math.round(Math.random() * array.length);
+      let pos = Math.round(Math.random() * array.length);
       if (states[pos] == false) {
-        array[pos] = i;
+        array[pos] = copyOfArray[i];
         states[pos] = true;
         i++;
       }
     }
   }
-  randomizeArray(tagArray);
+  console.log(categories.length);
+  if (categories.length == 0) {
+    console.log("Es la primera vez que se hace esta madreola");
+    getCategories("tpiauGjqb5yg1bA7qJmm");
+  }
+  async function getCategories(restaurantId) {
+    await firebase
+      .firestore()
+      .collection("restaurants")
+      .doc(restaurantId)
+      .collection("categories")
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((category) => {
+          let cat = {
+            id: category.id,
+            name: category.data().name,
+            products: category.data().products,
+          };
+          categories.push(cat);
+        });
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
+      });
+    setCategories(
+      categories.concat({
+        id: "restaurantes disponibles",
+        name: "restaurantes disponibles",
+      })
+    );
+    console.log(categories);
+  }
+  randomizeArray(categories);
 
   return (
     <SafeAreaView style={styles.SafeAreaView_}>
@@ -56,11 +92,13 @@ const Home_compo = ({ navigation }) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          <HomeHorizontalScroll category={tagArray[0]} />
-          <HomeHorizontalScroll category={tagArray[1]} />
-          <HomeHorizontalScroll category={tagArray[2]} />
-          <HomeHorizontalScroll category={tagArray[3]} />
-          <HomeHorizontalScroll category={tagArray[4]} />
+          {categories.map((category) => (
+            <HomeHorizontalScroll
+              products={category.products}
+              id={category.name}
+              category={category.name}
+            />
+          ))}
         </ScrollView>
       </View>
     </SafeAreaView>
