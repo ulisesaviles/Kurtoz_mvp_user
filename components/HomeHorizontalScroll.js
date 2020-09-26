@@ -1,31 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import Restaurant_medium from "./Restaurant_medium";
 import Food_medium from "./Food_medium";
+import firebase from "../database/database";
 
 const HomeHorizontalScroll = (props) => {
-  // console.log(`${props.category} :  ${props.products}`);
-  // let productos = props.products;
-  // console.log(productos);
-  let holas = ["hola", "hola"];
+  function capitalize(word) {
+    arr = word.split(" ");
+    word = "";
+    for (let i = 0; i < arr.length; i++) {
+      word += arr[i][0].toUpperCase();
+      for (let j = 1; j < arr[i].length; j++) {
+        word += arr[i][j];
+      }
+      word += " ";
+    }
+    return word;
+  }
+
   if (props.category == "restaurantes disponibles") {
     return (
       <View style={styles.HScrollContainer}>
-        <Text style={styles.HScrollTitle}>{props.category}</Text>
+        <Text style={styles.HScrollTitle}>{capitalize(props.category)}</Text>
         <ScrollView horizontal>
-          <Restaurant_medium restaurantName="Kurtoz Rolling and Bakery" />
+          {props.restaurants.map((restaurant) => (
+            <Restaurant_medium restaurantId={restaurant} />
+          ))}
         </ScrollView>
       </View>
     );
   } else {
     return (
       <View style={styles.HScrollContainer}>
-        <Text style={styles.HScrollTitle}>{props.category}</Text>
+        <Text style={styles.HScrollTitle}>{capitalize(props.category)}</Text>
         <ScrollView horizontal>
           {props.products.map((product) => (
-            <Food_medium foodId={product} />
-            // <Food_medium />
-            // <Food_medium />
+            <Food_medium
+              // id={product.product}
+              id={product}
+              // restaurantName={product.restaurantNameName}
+              // restaurantId={product.restaurantId}
+            />
           ))}
         </ScrollView>
       </View>

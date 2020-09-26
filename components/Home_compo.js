@@ -11,9 +11,8 @@ import HomeHorizontalScroll from "./HomeHorizontalScroll";
 import firebase from "../database/database";
 
 const Home_compo = ({ navigation }) => {
-  console.log(
-    "Holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-  );
+  let kurtozId = "tpiauGjqb5yg1bA7qJmm";
+
   const [categories, setCategories] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
   const onRefresh = React.useCallback(() => {
@@ -46,10 +45,30 @@ const Home_compo = ({ navigation }) => {
       }
     }
   }
-  console.log(categories.length);
+
+  const [restauranstIds, setRestaurants] = useState([]);
+  async function getRestaurants() {
+    if (restauranstIds.length == 0) {
+      await firebase
+        .firestore()
+        .collection("restaurants")
+        .get()
+        .then((restaurants) => {
+          restaurants.forEach((restaurant) => {
+            restauranstIds.push(restaurant.id);
+          });
+        })
+        .then(() => {
+          setRestaurants(restauranstIds);
+        })
+        .catch((err) => {
+          console.log("Error getting documents", err);
+        });
+    }
+  }
+  getRestaurants();
   if (categories.length == 0) {
-    console.log("Es la primera vez que se hace esta madreola");
-    getCategories("tpiauGjqb5yg1bA7qJmm");
+    getCategories(kurtozId);
   }
   async function getCategories(restaurantId) {
     await firebase
@@ -77,9 +96,9 @@ const Home_compo = ({ navigation }) => {
         name: "restaurantes disponibles",
       })
     );
-    console.log(categories);
   }
   randomizeArray(categories);
+  // console.log(categories);
 
   return (
     <SafeAreaView style={styles.SafeAreaView_}>
@@ -97,6 +116,7 @@ const Home_compo = ({ navigation }) => {
               products={category.products}
               id={category.name}
               category={category.name}
+              restaurants={restauranstIds}
             />
           ))}
         </ScrollView>

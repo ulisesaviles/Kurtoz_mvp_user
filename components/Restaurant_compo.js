@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "react-native-gesture-handler";
 import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
@@ -6,8 +6,91 @@ import Rating from "./Rating";
 import { Entypo } from "@expo/vector-icons";
 import FoodMini from "./FoodMini";
 import FoodCategory from "./FoodCategory";
+import firebase from "../database/database";
 
-const Restaurant_compo = ({ navigation }) => {
+const Restaurant_compo = ({ navigation, route }) => {
+  // Restaurant Details:
+  const [restaurantName, setRestaurantName] = useState(" - - -");
+  const [restaurantCategory, setRestaurantCategory] = useState(" - - -");
+  const [restaurantRating, setRestaurantRating] = useState(" -");
+  const [restaurantSchedule, setRestaurantSchedule] = useState(" - am - - pm");
+  const [restaurantAddress, setRestaurantAddress] = useState(" - - - - -");
+  const [restaurantImg, setRestaurantImg] = useState(
+    "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
+  );
+  const [menus, setMenus] = useState([]);
+
+  const [menuName, setMenuName] = useState(" - - - -");
+  function capitalize(word) {
+    arr = word.split(" ");
+    word = "";
+    for (let i = 0; i < arr.length; i++) {
+      word += arr[i][0].toUpperCase();
+      for (let j = 1; j < arr[i].length; j++) {
+        word += arr[i][j];
+      }
+      word += " ";
+    }
+    return word;
+  }
+
+  getRestaurantDetais(route.params.id);
+  async function getRestaurantDetais(restaurantId) {
+    if (
+      restaurantName == " - - -" &&
+      restaurantCategory == " - - -" &&
+      restaurantRating == " -" &&
+      restaurantSchedule == " - am - - pm" &&
+      restaurantAddress == " - - - - -" &&
+      restaurantImg ==
+        "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
+    ) {
+      await firebase
+        .firestore()
+        .collection("restaurants")
+        .doc(restaurantId)
+        .get()
+        .then((restaurant) => {
+          setRestaurantName(restaurant.data().name);
+          setRestaurantCategory(restaurant.data().category);
+          setRestaurantRating(restaurant.data().rating);
+          setRestaurantAddress(restaurant.data().address);
+          setRestaurantImg(restaurant.data().img);
+          let dayOfTheWeek = new Date();
+          dayOfTheWeek = dayOfTheWeek.getDay();
+          setRestaurantSchedule(
+            `${restaurant.data().labor_days[dayOfTheWeek].open} - ${
+              restaurant.data().labor_days[dayOfTheWeek].close
+            }`
+          );
+          getMenus(route.params.id);
+        });
+    }
+  }
+
+  async function getMenus(restaurantId) {
+    if (menus.length == 0) {
+      await firebase
+        .firestore()
+        .collection("restaurants")
+        .doc(restaurantId)
+        .collection("menus")
+        .limit(1)
+        .get()
+        .then((menus_) => {
+          menus_.forEach((menu) => {
+            menus.push({
+              menuName: menu.data().name,
+              categories: menu.data().categories,
+            });
+          });
+          setMenus(menus);
+          // está terminado el paso 1
+          // falta acomodar las categorias dentro de cada menu y los productos dentro de cada categoria
+        });
+    }
+  }
+
   return (
     <View>
       <View style={styles.scrollContainer}>
@@ -15,31 +98,30 @@ const Restaurant_compo = ({ navigation }) => {
           <View style={styles.imageContainer}>
             <Image
               source={{
-                uri:
-                  "https://d1ralsognjng37.cloudfront.net/3caa881c-8d86-48fe-8801-46c14997ec6d",
+                uri: restaurantImg,
               }}
               style={styles.backgroundImage}
             />
           </View>
           <View style={styles.descriptionContainer}>
-            <Text style={styles.title}>Kurtoz Rolling Bakery Coffe</Text>
+            <Text style={styles.title}>{restaurantName}</Text>
             <View style={styles.horizontalDescription}>
-              <Text style={styles.category}>Cafetería y Crepas</Text>
-              <Rating rating="4.8" />
+              <Text style={styles.category}>{restaurantCategory}</Text>
+              <Rating rating={restaurantRating} />
             </View>
             <View style={styles.horarioContainer}>
               <EvilIcons name="clock" size={16} color="black" />
-              <Text style={styles.horario}>Abierto de 10am - 8pm</Text>
+              <Text
+                style={styles.horario}
+              >{`Abierto de ${restaurantSchedule}`}</Text>
             </View>
           </View>
           <View style={styles.locationContainer}>
             <Entypo name="location-pin" size={18} color="grey" />
-            <Text style={styles.location}>
-              C. Bahía de Ballenas #322, Frac. El Mirador
-            </Text>
+            <Text style={styles.location}>{restaurantAddress}</Text>
           </View>
           <View style={styles.menuContainer}>
-            <Text style={styles.menu}>Menú</Text>
+            <Text style={styles.menu}>{menuName}</Text>
           </View>
           <FoodCategory />
           <FoodMini />

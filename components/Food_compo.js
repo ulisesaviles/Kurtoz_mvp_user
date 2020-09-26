@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -9,8 +9,61 @@ import {
   ScrollView,
 } from "react-native";
 import OpcionMini from "./OpcionMini";
+import firebase from "../database/database";
 
-const Food_compo = ({ navigation }) => {
+const Food_compo = ({ navigation, route }) => {
+  // TODO: Get the modifiers from firebase to display them
+  // TODO: Put the checkboxs to work hahah
+
+  const [title, setTitle] = useState(" - - -");
+  const [description, setDescription] = useState(
+    " - - - - - - - - - - - - - - - - - - -\n - - -"
+  );
+  const [img, setImg] = useState(
+    "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
+  );
+  const [modifiers, setModifiers] = useState([]);
+  function capitalize(word) {
+    arr = word.split(" ");
+    word = "";
+    for (let i = 0; i < arr.length; i++) {
+      word += arr[i][0].toUpperCase();
+      for (let j = 1; j < arr[i].length; j++) {
+        word += arr[i][j];
+      }
+      word += " ";
+    }
+    return word;
+  }
+
+  getProduct(route.params.restaurantId, route.params.foodId);
+
+  async function getProduct(restaurantId, productId) {
+    if (
+      title == " - - -" &&
+      img == "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif" &&
+      modifiers.length == 0 &&
+      description == " - - - - - - - - - - - - - - - - - - -\n - - -"
+    ) {
+      await firebase
+        .firestore()
+        .collection("restaurants")
+        .doc(restaurantId)
+        .collection("products")
+        .doc(productId)
+        .get()
+        .then((product) => {
+          setImg(product.data().img);
+          setTitle(capitalize(product.data().name));
+          setDescription(product.data().description);
+          setModifiers(product.data().modifiers);
+        })
+        .catch((err) => {
+          console.log("Error getting documents", err);
+        });
+    }
+  }
+
   return (
     <View>
       <View style={styles.scrollContainer}>
@@ -18,27 +71,23 @@ const Food_compo = ({ navigation }) => {
           <View style={styles.imageContainer}>
             <Image
               source={{
-                uri:
-                  "https://scontent.ftij1-1.fna.fbcdn.net/v/t1.0-9/27858576_172626690015090_2321536906365458293_n.jpg?_nc_cat=106&_nc_sid=8bfeb9&_nc_eui2=AeE6-6KCW8trFvQxazSM4QEVvUI5v6I1YP29Qjm_ojVg_YDtO5jdy0dbUu7-EY1U01jsEj6eEsAMtg1vNlDi0orZ&_nc_ohc=DCKP55MdsHUAX9BGKN1&_nc_ht=scontent.ftij1-1.fna&oh=1269804a0024db38e16ba82f993fb37a&oe=5F814571",
+                uri: img,
               }}
               style={styles.backgroundImage}
             />
           </View>
           <View style={styles.descriptionContainer}>
-            <Text style={styles.title}>Nieve de Vainilla</Text>
-            <Text style={styles.description}>
-              Nieve de Vainilla en cono de galleta de chocolate suizo super mega
-              rico sí señor.
-            </Text>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.description}>{description}</Text>
           </View>
           <View style={styles.opcionesContainer}>
             <Text style={styles.opciones}>Opciones</Text>
           </View>
-          <OpcionMini />
-          <OpcionMini />
-          <OpcionMini />
-          <OpcionMini />
-          <OpcionMini />
+          <View>
+            {modifiers.map((modifier) => (
+              <OpcionMini />
+            ))}
+          </View>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("Carrito");
