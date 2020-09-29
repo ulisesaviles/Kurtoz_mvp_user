@@ -10,6 +10,7 @@ import firebase from "../database/database";
 
 const Restaurant_compo = ({ navigation, route }) => {
   // Restaurant Details:
+  const [updater, update] = useState(" .");
   const [restaurantName, setRestaurantName] = useState(" - - -");
   const [restaurantCategory, setRestaurantCategory] = useState(" - - -");
   const [restaurantRating, setRestaurantRating] = useState(" -");
@@ -79,18 +80,89 @@ const Restaurant_compo = ({ navigation, route }) => {
         .get()
         .then((menus_) => {
           menus_.forEach((menu) => {
-            menus.push({
-              menuName: menu.data().name,
-              categories: menu.data().categories,
-            });
+            getCategories(restaurantId, menu.data().categories).then(
+              (categories) => {
+                let subObj = {
+                  menuName: menu.data().name,
+                  categories: categories,
+                };
+                menus.push(subObj);
+                setMenus(menus);
+                update(" ");
+              }
+            );
           });
-          setMenus(menus);
-          // está terminado el paso 1
-          // falta acomodar las categorias dentro de cada menu y los productos dentro de cada categoria
         });
     }
   }
 
+  async function getCategories(restaurantId, categoriesToGet) {
+    for (let i = 0; i < categoriesToGet.length; i++) {
+      await firebase
+        .firestore()
+        .collection("restaurants")
+        .doc(restaurantId)
+        .collection("categories")
+        .doc(categoriesToGet[i])
+        .get()
+        .then((category) => {
+          categoriesToGet[i] = {
+            categoryName: category.data().name,
+            products: category.data().products,
+          };
+        });
+    }
+    return categoriesToGet;
+  }
+
+  if (menus[0] != undefined) {
+    return (
+      <View>
+        <View style={styles.scrollContainer}>
+          <ScrollView>
+            <View style={styles.imageContainer}>
+              <Image
+                source={{
+                  uri: restaurantImg,
+                }}
+                style={styles.backgroundImage}
+              />
+            </View>
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.title}>{`${restaurantName} ${updater}`}</Text>
+              <View style={styles.horizontalDescription}>
+                <Text style={styles.category}>{restaurantCategory}</Text>
+                <Rating rating={restaurantRating} />
+              </View>
+              <View style={styles.horarioContainer}>
+                <EvilIcons name="clock" size={16} color="black" />
+                <Text
+                  style={styles.horario}
+                >{`Abierto de ${restaurantSchedule}`}</Text>
+              </View>
+            </View>
+            <View style={styles.locationContainer}>
+              <Entypo name="location-pin" size={18} color="grey" />
+              <Text style={styles.location}>{restaurantAddress}</Text>
+            </View>
+            <View style={styles.menuContainer}>
+              <Text style={styles.menu}>{capitalize(menus[0].menuName)}</Text>
+            </View>
+            <>
+              {menus[0].categories.map((category) => (
+                <>
+                  <FoodCategory title={capitalize(category.categoryName)} />
+                  {category.products.map((product) => (
+                    <FoodMini foodId={product} restaurantId={route.params.id} />
+                  ))}
+                </>
+              ))}
+            </>
+          </ScrollView>
+        </View>
+      </View>
+    );
+  }
   return (
     <View>
       <View style={styles.scrollContainer}>
@@ -123,14 +195,6 @@ const Restaurant_compo = ({ navigation, route }) => {
           <View style={styles.menuContainer}>
             <Text style={styles.menu}>{menuName}</Text>
           </View>
-          <FoodCategory />
-          <FoodMini />
-          <FoodMini />
-          <FoodCategory />
-          <FoodMini />
-          <FoodMini />
-          <FoodCategory />
-          <FoodMini />
         </ScrollView>
       </View>
     </View>

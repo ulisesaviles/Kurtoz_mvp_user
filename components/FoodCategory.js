@@ -1,10 +1,10 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-function FoodCategory() {
+function FoodCategory(props) {
   return (
     <View style={styles.container}>
-      <Text style={styles.category}>Nieves</Text>
+      <Text style={styles.category}>{props.title}</Text>
     </View>
   );
 }

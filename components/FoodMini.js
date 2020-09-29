@@ -1,30 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import "react-native-gesture-handler";
+import firebase from "../database/database";
 
-function FoodMini() {
+function FoodMini(props) {
   const navigation = useNavigation();
+  const [title, setTitle] = useState(" - - -");
+  const [description, setDescription] = useState(" - - - - -\n - - -");
+  const [price, setPrice] = useState(" - ");
+  const [img, setImg] = useState(
+    "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
+  );
+
+  async function getFood(foodId, restaurantId) {
+    if (
+      title == " - - -" &&
+      description == " - - - - -\n - - -" &&
+      price == " - " &&
+      img == "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
+    ) {
+      await firebase
+        .firestore()
+        .collection("restaurants")
+        .doc(restaurantId)
+        .collection("products")
+        .doc(foodId)
+        .get()
+        .then((product) => {
+          setTitle(product.data().name);
+          setDescription(product.data().description);
+          setPrice(product.data().variants[0].price);
+          setImg(product.data().img);
+        });
+    }
+  }
+  getFood(props.foodId, props.restaurantId);
 
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("Food_compo");
+        navigation.navigate("Food_compo", {
+          restaurantId: props.restaurantId,
+          foodId: props.foodId,
+        });
       }}
     >
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.FoodName}>Nieve de Vainilla</Text>
-          <Text style={styles.description}>
-            Nieve de Vainilla en cono de galleta de chocolate suizo super mega
-            rico sí señor.
-          </Text>
-          <Text style={styles.Price}>$ 120.00 MXN</Text>
+          <Text style={styles.FoodName}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
+          <Text style={styles.Price}>{`$ ${price}.00 MXN`}</Text>
         </View>
         <Image
           source={{
-            uri:
-              "https://scontent.ftij1-1.fna.fbcdn.net/v/t1.0-9/27858576_172626690015090_2321536906365458293_n.jpg?_nc_cat=106&_nc_sid=8bfeb9&_nc_eui2=AeE6-6KCW8trFvQxazSM4QEVvUI5v6I1YP29Qjm_ojVg_YDtO5jdy0dbUu7-EY1U01jsEj6eEsAMtg1vNlDi0orZ&_nc_ohc=DCKP55MdsHUAX9BGKN1&_nc_ht=scontent.ftij1-1.fna&oh=1269804a0024db38e16ba82f993fb37a&oe=5F814571",
+            uri: img,
           }}
           style={styles.photo}
         />
