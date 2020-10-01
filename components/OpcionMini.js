@@ -4,19 +4,18 @@ import CheckBox from "react-native-check-box";
 
 function OpcionMini() {
   return (
-    <View style={styles.container}>
+    <View style={styles.optionContainer}>
       <CheckBox />
-      {/* https://nicedoc.io/crazycodeboy/react-native-check-box */}
-      <View style={styles.textContainer}>
-        <Text style={styles.opcion}>Crema batida</Text>
-        <Text style={styles.Price}>$ 20.00 MXN</Text>
+      <View style={styles.optionTextContainer}>
+        <Text style={styles.optionText}>Crema batida</Text>
+        <Text style={styles.optionPrice}>$ 20.00 MXN</Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  optionContainer: {
     backgroundColor: "rgb(255, 255, 255)",
     width: "100%",
     marginBottom: 2,
@@ -24,18 +23,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  opcion: {
+  optionText: {
     fontSize: 20,
     fontWeight: "400",
   },
-  textContainer: {
+  optionTextContainer: {
     width: "90%",
     height: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  Price: {
+  optionPrice: {
     fontWeight: "400",
   },
 });

@@ -8,14 +8,12 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import OpcionMini from "./OpcionMini";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import firebase from "../database/database";
 
 const Food_compo = ({ navigation, route }) => {
-  // TODO: Get the modifiers from firebase to display them
-  // TODO: Put the checkboxs to work hahah
-
   const [title, setTitle] = useState(" - - -");
+  const [updater, update] = useState("");
   const [description, setDescription] = useState(
     " - - - - - - - - - - - - - - - - - - -\n - - -"
   );
@@ -23,6 +21,8 @@ const Food_compo = ({ navigation, route }) => {
     "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
   );
   const [modifiers, setModifiers] = useState([]);
+  const [booleanModifiers, setBooleanModifires] = useState([]);
+  const [cuantity, setCuantity] = useState(1);
   function capitalize(word) {
     arr = word.split(" ");
     word = "";
@@ -34,6 +34,18 @@ const Food_compo = ({ navigation, route }) => {
       word += " ";
     }
     return word;
+  }
+  function iconFor(booleanValue) {
+    if (booleanValue == 1) {
+      return "checkbox-intermediate";
+    }
+    return "checkbox-blank-outline";
+  }
+  function flip(value) {
+    if (value == 1) {
+      return -1;
+    }
+    return 1;
   }
 
   getProduct(route.params.restaurantId, route.params.foodId);
@@ -56,12 +68,83 @@ const Food_compo = ({ navigation, route }) => {
           setImg(product.data().img);
           setTitle(capitalize(product.data().name));
           setDescription(product.data().description);
-          setModifiers(product.data().modifiers);
+          for (let i = 0; i < product.data().modifiers.length; i++) {
+            modifiers.push(product.data().modifiers[i]);
+          }
+          setModifiers(modifiers);
+          getModifires(restaurantId, productId);
         })
         .catch((err) => {
           console.log("Error getting documents", err);
         });
+      for (let i = 0; i < modifiers.length; i++) {
+        booleanModifiers.push(-1);
+      }
+      setBooleanModifires(booleanModifiers);
     }
+  }
+
+  async function pushCart() {
+    let itemToPush = {
+      restaurantId: route.params.restaurantId,
+      productId: route.params.foodId,
+      cuantity: cuantity,
+      modifires: [],
+    };
+    for (let i = 0; i < booleanModifiers.length; i++) {
+      if (booleanModifiers[i] == 1) {
+        itemToPush.modifires.push(modifiers[i].id);
+      }
+    }
+    console.log(itemToPush);
+    getCurrentCart(itemToPush);
+  }
+
+  async function getCurrentCart(itemToPush) {
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc("CydewFVojffkrVbBuQQF")
+      .get()
+      .then((user) => {
+        updateCart(user.data().cart, itemToPush);
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
+      });
+  }
+
+  async function updateCart(currentCart, itemToPush) {
+    currentCart.push(itemToPush);
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc("CydewFVojffkrVbBuQQF")
+      .set({ cart: currentCart }, { merge: true });
+  }
+
+  async function getModifires(restaurantId, productId) {
+    for (let i = 0; i < modifiers.length; i++) {
+      await firebase
+        .firestore()
+        .collection("restaurants")
+        .doc(restaurantId)
+        .collection("modifiers")
+        .doc(modifiers[i])
+        .get()
+        .then((modifier) => {
+          modifiers[i] = {
+            id: modifier.id,
+            name: modifier.data().name,
+            price: modifier.data().price,
+          };
+        })
+        .catch((err) => {
+          console.log("Error getting documents", err);
+        });
+      setModifiers(modifiers);
+    }
+    update(" ");
   }
 
   return (
@@ -82,14 +165,64 @@ const Food_compo = ({ navigation, route }) => {
           </View>
           <View style={styles.opcionesContainer}>
             <Text style={styles.opciones}>Opciones</Text>
+            <Text style={styles.updater}>{updater}</Text>
           </View>
           <View>
             {modifiers.map((modifier) => (
-              <OpcionMini />
+              <View style={styles.optionContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    booleanModifiers[modifiers.indexOf(modifier)] =
+                      booleanModifiers[modifiers.indexOf(modifier)] * -1;
+                    setBooleanModifires(booleanModifiers);
+                    update(`${booleanModifiers}`);
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name={iconFor(
+                      booleanModifiers[modifiers.indexOf(modifier)]
+                    )}
+                    size={26}
+                    color="black"
+                  />
+                </TouchableOpacity>
+                <View style={styles.optionTextContainer}>
+                  <Text style={styles.optionText}>{modifier.name}</Text>
+                  <Text
+                    style={styles.optionPrice}
+                  >{`$ ${modifier.price}.00 MXN`}</Text>
+                </View>
+              </View>
             ))}
+          </View>
+
+          <View style={styles.cuantityContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                setCuantity(cuantity - 1);
+                if (cuantity <= 1) {
+                  setCuantity(1);
+                }
+              }}
+            >
+              <View style={styles.modifyCuantity}>
+                <Text style={styles.modifyCuantityText}>-</Text>
+              </View>
+            </TouchableOpacity>
+            <Text style={styles.cuantity}>{cuantity}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setCuantity(cuantity + 1);
+              }}
+            >
+              <View style={styles.modifyCuantity}>
+                <Text style={styles.modifyCuantityText}>+</Text>
+              </View>
+            </TouchableOpacity>
           </View>
           <TouchableOpacity
             onPress={() => {
+              // pushCart();
               navigation.navigate("Carrito");
             }}
           >
@@ -134,6 +267,7 @@ const styles = StyleSheet.create({
   opcionesContainer: {
     backgroundColor: "rgb(255, 255, 255)",
     padding: 20,
+    flexDirection: "row",
   },
   opciones: {
     fontSize: 30,
@@ -151,6 +285,58 @@ const styles = StyleSheet.create({
     color: "rgb(255, 255, 255)",
     fontSize: 22,
     fontWeight: "600",
+  },
+  optionContainer: {
+    backgroundColor: "rgb(255, 255, 255)",
+    width: "100%",
+    marginBottom: 2,
+    padding: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  optionText: {
+    fontSize: 20,
+    fontWeight: "400",
+  },
+  optionTextContainer: {
+    width: "90%",
+    height: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  optionPrice: {
+    fontWeight: "400",
+  },
+  updater: {
+    fontSize: 1,
+    color: "rgb(255,255,255)",
+  },
+  cuantityContainer: {
+    backgroundColor: "rgb(255,255,255)",
+    marginBottom: 2,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    height: 100,
+  },
+  modifyCuantity: {
+    borderRadius: 50,
+    borderWidth: 1,
+    width: 60,
+    height: 60,
+    borderColor: "rgb(240,240,240)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modifyCuantityText: {
+    fontSize: 30,
+    fontWeight: "400",
+  },
+  cuantity: {
+    fontWeight: "300",
+    fontSize: 30,
+    marginHorizontal: "5%",
   },
 });
 
