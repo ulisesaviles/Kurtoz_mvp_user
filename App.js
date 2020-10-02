@@ -23,7 +23,7 @@ export default function App() {
               return (
                 <MaterialIcons name={"search"} size={size} color={color} />
               );
-            } else if (route.name === "Carrito") {
+            } else if (route.name === "Cart") {
               return (
                 <MaterialIcons
                   name={"shopping-cart"}
@@ -53,7 +53,7 @@ export default function App() {
       >
         <Tab.Screen name="Inicio" component={Home} />
         <Tab.Screen name="Buscar" component={BuscarScreen} />
-        <Tab.Screen name="Carrito" component={CartScreen} />
+        <Tab.Screen name="Cart" component={CartScreen} />
         <Tab.Screen name="Órdenes" component={Ordenes} />
         <Tab.Screen name="Cuenta" component={PerfilScreen} />
       </Tab.Navigator>

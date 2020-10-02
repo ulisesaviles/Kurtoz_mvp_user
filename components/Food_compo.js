@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import firebase from "../database/database";
 
@@ -17,12 +18,18 @@ const Food_compo = ({ navigation, route }) => {
   const [description, setDescription] = useState(
     " - - - - - - - - - - - - - - - - - - -\n - - -"
   );
+  const [modifiersPrice, setModifiersPrice] = useState(0);
+  const [variant, setVariant] = useState("-");
   const [img, setImg] = useState(
     "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
   );
   const [modifiers, setModifiers] = useState([]);
   const [booleanModifiers, setBooleanModifires] = useState([]);
+  const [variants, setVariants] = useState([]);
+  const [booleanVariants, setBooleanVariants] = useState([]);
   const [cuantity, setCuantity] = useState(1);
+  const [price, setPrice] = useState(" -");
+
   function capitalize(word) {
     arr = word.split(" ");
     word = "";
@@ -37,15 +44,14 @@ const Food_compo = ({ navigation, route }) => {
   }
   function iconFor(booleanValue) {
     if (booleanValue == 1) {
+      return "check-box";
+    } else if (booleanValue == -1) {
+      return "check-box-outline-blank";
+    } else if (booleanValue == 0) {
+      return "checkbox-blank-outline";
+    } else if (booleanValue == 2) {
       return "checkbox-intermediate";
     }
-    return "checkbox-blank-outline";
-  }
-  function flip(value) {
-    if (value == 1) {
-      return -1;
-    }
-    return 1;
   }
 
   getProduct(route.params.restaurantId, route.params.foodId);
@@ -68,6 +74,15 @@ const Food_compo = ({ navigation, route }) => {
           setImg(product.data().img);
           setTitle(capitalize(product.data().name));
           setDescription(product.data().description);
+          setPrice(product.data().variants[0].price);
+          for (let i = 0; i < product.data().variants.length; i++) {
+            variants.push(product.data().variants[i]);
+            booleanVariants.push(0);
+          }
+          booleanVariants[0] = 2;
+          setBooleanVariants(booleanVariants);
+          setVariants(variants);
+          setVariant(variants[0].name);
           for (let i = 0; i < product.data().modifiers.length; i++) {
             modifiers.push(product.data().modifiers[i]);
           }
@@ -86,17 +101,25 @@ const Food_compo = ({ navigation, route }) => {
 
   async function pushCart() {
     let itemToPush = {
+      productName: title,
+      productPrice: price,
+      productImg: img,
       restaurantId: route.params.restaurantId,
       productId: route.params.foodId,
       cuantity: cuantity,
       modifires: [],
+      variant: variant,
     };
     for (let i = 0; i < booleanModifiers.length; i++) {
       if (booleanModifiers[i] == 1) {
-        itemToPush.modifires.push(modifiers[i].id);
+        itemToPush.modifires.push({
+          id: modifiers[i].id,
+          name: modifiers[i].name,
+          price: modifiers[i].price,
+        });
+        itemToPush.productPrice += modifiers[i].price;
       }
     }
-    console.log(itemToPush);
     getCurrentCart(itemToPush);
   }
 
@@ -120,7 +143,10 @@ const Food_compo = ({ navigation, route }) => {
       .firestore()
       .collection("users")
       .doc("CydewFVojffkrVbBuQQF")
-      .set({ cart: currentCart }, { merge: true });
+      .set({ cart: currentCart }, { merge: true })
+      .then((res) => {
+        navigation.navigate("Cart", { needUpdate: true, hola: "hola" });
+      });
   }
 
   async function getModifires(restaurantId, productId) {
@@ -164,7 +190,39 @@ const Food_compo = ({ navigation, route }) => {
             <Text style={styles.description}>{description}</Text>
           </View>
           <View style={styles.opcionesContainer}>
-            <Text style={styles.opciones}>Opciones</Text>
+            <Text style={styles.opciones}>Variantes</Text>
+          </View>
+          <View>
+            {variants.map((variant) => (
+              <View style={styles.optionContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    for (let i = 0; i < variants.length; i++) {
+                      booleanVariants[i] = 0;
+                    }
+                    booleanVariants[variants.indexOf(variant)] = 2;
+                    setVariant(variants[variants.indexOf(variant)].name);
+                    setPrice(variants[variants.indexOf(variant)].price);
+                    update(`${booleanVariants}`);
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name={iconFor(booleanVariants[variants.indexOf(variant)])}
+                    size={26}
+                    color="black"
+                  />
+                </TouchableOpacity>
+                <View style={styles.optionTextContainer}>
+                  <Text style={styles.optionText}>{variant.name}</Text>
+                  <Text
+                    style={styles.optionPrice}
+                  >{`$ ${variant.price}.00 MXN`}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+          <View style={styles.opcionesContainer}>
+            <Text style={styles.opciones}>Extras</Text>
             <Text style={styles.updater}>{updater}</Text>
           </View>
           <View>
@@ -175,10 +233,15 @@ const Food_compo = ({ navigation, route }) => {
                     booleanModifiers[modifiers.indexOf(modifier)] =
                       booleanModifiers[modifiers.indexOf(modifier)] * -1;
                     setBooleanModifires(booleanModifiers);
+                    if (booleanModifiers[modifiers.indexOf(modifier)] == 1) {
+                      setModifiersPrice(modifiersPrice + modifier.price);
+                    } else {
+                      setModifiersPrice(modifiersPrice - modifier.price);
+                    }
                     update(`${booleanModifiers}`);
                   }}
                 >
-                  <MaterialCommunityIcons
+                  <MaterialIcons
                     name={iconFor(
                       booleanModifiers[modifiers.indexOf(modifier)]
                     )}
@@ -190,12 +253,11 @@ const Food_compo = ({ navigation, route }) => {
                   <Text style={styles.optionText}>{modifier.name}</Text>
                   <Text
                     style={styles.optionPrice}
-                  >{`$ ${modifier.price}.00 MXN`}</Text>
+                  >{` + $ ${modifier.price}.00 MXN`}</Text>
                 </View>
               </View>
             ))}
           </View>
-
           <View style={styles.cuantityContainer}>
             <TouchableOpacity
               onPress={() => {
@@ -222,12 +284,17 @@ const Food_compo = ({ navigation, route }) => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              // pushCart();
-              navigation.navigate("Carrito");
+              pushCart();
+              // navigation.navigate("Carrito");
             }}
           >
             <View style={styles.addToCartBtn}>
-              <Text style={styles.addToCart}>Add to cart</Text>
+              <View style={styles.addToCartContainer}>
+                <Text style={styles.addToCart}>Add to cart</Text>
+              </View>
+              <Text style={styles.price}>{`$ ${
+                (price + modifiersPrice) * cuantity
+              }.00 MXN`}</Text>
             </View>
           </TouchableOpacity>
         </ScrollView>
@@ -277,9 +344,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(0,0,0)",
     padding: 10,
     width: "95%",
-    // borderRadius: 50,
+    flexDirection: "row",
     alignItems: "center",
+    textAlign: "center",
     alignSelf: "center",
+    justifyContent: "flex-end",
   },
   addToCart: {
     color: "rgb(255, 255, 255)",
@@ -337,6 +406,15 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     fontSize: 30,
     marginHorizontal: "5%",
+  },
+  price: {
+    color: "rgb(150,150,150)",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  addToCartContainer: {
+    alignItems: "center",
+    width: "50%",
   },
 });
 
