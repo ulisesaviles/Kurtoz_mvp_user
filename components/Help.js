@@ -7,7 +7,10 @@ const Help = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <WebView
-        source={{ uri: "https://ulisesaviles.github.io/Sorting-algorithms/" }}
+        source={{
+          uri:
+            "https://ulisesaviles.github.io/Kurtoz_mvp_user/StripeContainer/",
+        }}
         style={{ marginTop: 0 }}
       />
       {/* <Text style={{ alignSelf: "center", fontSize: 50 }}>Help</Text> */}
