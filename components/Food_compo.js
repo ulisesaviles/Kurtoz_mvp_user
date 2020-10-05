@@ -130,7 +130,7 @@ const Food_compo = ({ navigation, route }) => {
       .doc("CydewFVojffkrVbBuQQF")
       .get()
       .then((user) => {
-        updateCart(user.data().cart, itemToPush);
+        updateCart(user.data().cart.items, itemToPush);
       })
       .catch((err) => {
         console.log("Error getting documents", err);
@@ -143,13 +143,18 @@ const Food_compo = ({ navigation, route }) => {
       .firestore()
       .collection("users")
       .doc("CydewFVojffkrVbBuQQF")
-      .set({ cart: currentCart }, { merge: true })
+      .set(
+        {
+          cart: { items: currentCart, restaurantId: route.params.restaurantId },
+        },
+        { merge: true }
+      )
       .then((res) => {
         navigation.navigate("Cart", { needUpdate: true, hola: "hola" });
       });
   }
 
-  async function getModifires(restaurantId, productId) {
+  async function getModifires(restaurantId) {
     for (let i = 0; i < modifiers.length; i++) {
       await firebase
         .firestore()

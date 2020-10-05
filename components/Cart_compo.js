@@ -14,9 +14,13 @@ import "react-native-gesture-handler";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Cart_compo = ({ navigation, route }) => {
-  const [cart, setCart] = useState([]);
-  const [requestDone, setRequestDone] = useState(false);
   const [total, setTotal] = useState(0);
+  const [restaurantName, setRestaurantName] = useState(" - - - ");
+  const [restaurantImg, setRestaurantImg] = useState("");
+
+  const [requestDone, setRequestDone] = useState(false);
+  const [cart, setCart] = useState([]);
+  const [restaurantId, setRestaurantId] = useState(" -");
 
   async function getCart() {
     if (requestDone == false) {
@@ -26,23 +30,53 @@ const Cart_compo = ({ navigation, route }) => {
         .doc("CydewFVojffkrVbBuQQF")
         .onSnapshot((user) => {
           setRequestDone(true);
-          setCart(user.data().cart);
+          setCart(user.data().cart.items);
+          setRestaurantId(user.data().cart.restaurantId);
           let total_ = 0;
-          for (let i = 0; i < user.data().cart.length; i++) {
+          for (let i = 0; i < user.data().cart.items.length; i++) {
             total_ +=
-              user.data().cart[i].productPrice * user.data().cart[i].cuantity;
+              user.data().cart.items[i].productPrice *
+              user.data().cart.items[i].cuantity;
           }
           setTotal(total_);
+          getRestaurantDetails(user.data().cart.restaurantId);
         });
     }
   }
   getCart();
+
+  async function getRestaurantDetails(restaurantId_) {
+    await firebase
+      .firestore()
+      .collection("restaurants")
+      .doc(restaurantId_)
+      .get()
+      .then((restaurant) => {
+        setRestaurantName(restaurant.data().name);
+        setRestaurantImg(restaurant.data().img);
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
+      });
+  }
+  function completeOrder() {
+    let userOrder = {
+      products: cart,
+      restaurantId: restaurantId,
+      restaurantName: restaurantName,
+      restaurantImg: restaurantImg,
+      type: "active",
+      total: total,
+    };
+    console.log(userOrder);
+    // Postear la orden en el usuario
+  }
   async function updateCart(cart_) {
     await firebase
       .firestore()
       .collection("users")
       .doc("CydewFVojffkrVbBuQQF")
-      .update({ cart: cart_ });
+      .update({ cart: { restaurantId: restaurantId, items: cart_ } });
   }
 
   if (cart.length > 0) {
@@ -56,8 +90,9 @@ const Cart_compo = ({ navigation, route }) => {
             <ScrollView>
               {/* <DeliveryDetails /> */}
               <View style={styles.itemsContainer}>
-                <View style={styles.tuOrdenContainer}>
-                  <Text style={styles.tuOrden}>Tu Órden</Text>
+                <View style={styles.restaurantNameContainer}>
+                  <Text style={styles.restaurantName}>{restaurantName}</Text>
+                  <View style={styles.restaurantNameLine} />
                 </View>
                 <>
                   {cart.map((cartItem) => (
@@ -104,9 +139,7 @@ const Cart_compo = ({ navigation, route }) => {
                               ))}
                             </View>
                             <Text style={styles.foodMiniPrice}>
-                              {`$ ${
-                                cartItem.productPrice * cartItem.cuantity
-                              }.00 MXN`}
+                              {`$ ${cartItem.productPrice}.00 MXN`}
                             </Text>
                           </View>
                           <Image
@@ -138,7 +171,7 @@ const Cart_compo = ({ navigation, route }) => {
               </View>
             </ScrollView>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={completeOrder}>
             <View style={styles.addToCartBtn}>
               <View style={styles.addToCartContainer}>
                 <Text style={styles.addToCart}>Completar Orden</Text>
@@ -211,16 +244,17 @@ const styles = StyleSheet.create({
   scrollContainer: {
     height: "93%",
   },
-  tuOrdenContainer: {
+  restaurantNameContainer: {
     backgroundColor: "rgb(255, 255, 255)",
     width: "100%",
     alignItems: "center",
     marginTop: "2%",
-    paddingTop: "3%",
+    paddingTop: "8%",
+    paddingBottom: "8%",
   },
-  tuOrden: {
-    fontSize: 30,
-    fontWeight: "400",
+  restaurantName: {
+    fontSize: 40,
+    fontWeight: "300",
   },
   foodMiniContainer: {
     // backgroundColor: "red",
@@ -276,6 +310,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     backgroundColor: "rgb(255, 255, 255)",
+    marginBottom: 2,
   },
   foodMiniDeleteContainer: {
     // backgroundColor: "blue",
@@ -324,6 +359,12 @@ const styles = StyleSheet.create({
     color: "rgb(150,150,150)",
     fontSize: 15,
     fontWeight: "700",
+  },
+  restaurantNameLine: {
+    height: 1.3,
+    width: "30%",
+    backgroundColor: "rgb(0,0,0)",
+    marginTop: "5%",
   },
 });
 
