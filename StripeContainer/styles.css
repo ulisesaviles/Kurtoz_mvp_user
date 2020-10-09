@@ -1,0 +1,86 @@
+body {
+  padding: 5vw;
+  margin: 0;
+}
+
+.StripeElement {
+  box-sizing: border-box;
+
+  height: 40px;
+
+  padding: 10px 12px;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color: white;
+
+  box-shadow: 0 1px 3px 0 #e6ebf1;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+  box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+  border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+  background-color: #fefde5 !important;
+}
+
+.label {
+  font-size: 1em;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  color: rgb(119, 119, 119);
+}
+
+.mini-title-container {
+  padding-bottom: 15px;
+}
+
+.submit-btn {
+  background-color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
+  font-weight: 600;
+  border-radius: 10px;
+  font-size: 20px;
+  width: 90vw;
+  margin-top: 8vw;
+  padding: 2vw;
+}
+
+.stripe-logo {
+  width: 62.5px;
+  height: 25px;
+}
+
+.powered-by-container {
+  display: inline-flex;
+  align-items: center;
+  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(119, 119, 119);
+}
+
+.extra-info-container {
+  text-align: center;
+}
+
+.errors {
+  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(255, 0, 0);
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.title {
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  font-size: 2em;
+}

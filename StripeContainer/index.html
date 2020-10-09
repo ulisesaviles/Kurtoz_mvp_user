@@ -5,16 +5,39 @@
     <title>Stripe Card Payments</title>
     <meta name="description" content="Payments handler" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- <link rel="stylesheet" href="css/normalize.css" />
-    <link rel="stylesheet" href="css/global.css" /> -->
-    <!-- <script src="https://js.stripe.com/v3/"></script> -->
-    <!-- <script src="/script.js" defer></script> -->
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://js.stripe.com/v3/"></script>
   </head>
 
   <body>
-    <div id="container">
-      <h1 id="text">Que onda bro</h1>
+    <div class="title">
+      <h1>
+        Título
+      </h1>
     </div>
+    <form action="/charge" method="post" id="payment-form">
+      <div class="form-row">
+        <div class="mini-title-container">
+          <label for="card-element" class="label">
+            Información de la tarjeta
+          </label>
+        </div>
+        <div id="card-element">
+          <!-- A Stripe Element will be inserted here. -->
+        </div>
+    
+        <!-- Used to display form errors. -->
+        <div id="card-errors" role="alert" class="errors"></div>
+      </div>
+    
+      <button class="submit-btn">Guardar método de pago</button>
+      <div class="extra-info-container">
+        <div class="powered-by-container">
+          <h3>Proveído por </h3>
+          <img src="Stripe_logo.png" class="stripe-logo">
+        </div>
+      </div>
+    </form>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="/__/firebase/7.22.1/firebase-app.js"></script>
 
