@@ -8,7 +8,6 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-// import DeliveryDetails from "./DeliveryDetails";
 import firebase from "../database/database";
 import "react-native-gesture-handler";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -59,8 +58,11 @@ const Cart_compo = ({ navigation, route }) => {
         console.log("Error getting documents", err);
       });
   }
-  function completeOrder() {
+  async function completeOrder() {
+    let today = new Date();
+    today = today.getTime();
     let userOrder = {
+      date: today,
       products: cart,
       restaurantId: restaurantId,
       restaurantName: restaurantName,
@@ -68,8 +70,55 @@ const Cart_compo = ({ navigation, route }) => {
       type: "active",
       total: total,
     };
-    console.log(userOrder);
-    // Postear la orden en el usuario
+    let restaurantCart = [];
+    let product;
+    for (let i = 0; i < cart.length; i++) {
+      product = cart[i];
+      let modifiers = [];
+      for (let j = 0; j < product.modifires.length; j++) {
+        modifiers.push({
+          id: product.modifires[j].id,
+          quantity: 1,
+        });
+      }
+      let restaurantProduct = {
+        quantity: product.cuantity,
+        id: product.productId,
+        variant: product.variantIndex,
+        modifiers: modifiers,
+      };
+      restaurantCart.push(restaurantProduct);
+    }
+    let restaurantOrder = {
+      type: "active",
+      total: total,
+      user: {
+        name: "Ulises tu puto rey",
+        id: "CydewFVojffkrVbBuQQF",
+      },
+      createdAt: {
+        seconds: Math.floor(today / 1000),
+      },
+      products: restaurantCart,
+    };
+    // console.log(restaurantOrder);
+
+    await firebase
+      .firestore()
+      .collection("restaurants")
+      .doc(restaurantId)
+      .collection("orders")
+      .add(restaurantOrder);
+
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc("CydewFVojffkrVbBuQQF")
+      .collection("orders")
+      .add(userOrder);
+
+    setRestaurantId(" -");
+    updateCart([]);
   }
   async function updateCart(cart_) {
     await firebase

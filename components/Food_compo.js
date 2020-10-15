@@ -15,6 +15,7 @@ import firebase from "../database/database";
 const Food_compo = ({ navigation, route }) => {
   const [title, setTitle] = useState(" - - -");
   const [updater, update] = useState("");
+  const [variantIndex, setVariantIndex] = useState(0);
   const [description, setDescription] = useState(
     " - - - - - - - - - - - - - - - - - - -\n - - -"
   );
@@ -109,6 +110,7 @@ const Food_compo = ({ navigation, route }) => {
       cuantity: cuantity,
       modifires: [],
       variant: variant,
+      variantIndex: variantIndex,
     };
     for (let i = 0; i < booleanModifiers.length; i++) {
       if (booleanModifiers[i] == 1) {
@@ -207,6 +209,7 @@ const Food_compo = ({ navigation, route }) => {
                     }
                     booleanVariants[variants.indexOf(variant)] = 2;
                     setVariant(variants[variants.indexOf(variant)].name);
+                    setVariantIndex(variants[variants.indexOf(variant)]);
                     setPrice(variants[variants.indexOf(variant)].price);
                     update(`${booleanVariants}`);
                   }}

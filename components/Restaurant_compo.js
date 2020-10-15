@@ -103,7 +103,7 @@ const Restaurant_compo = ({ navigation, route }) => {
         .collection("restaurants")
         .doc(restaurantId)
         .collection("categories")
-        .doc(categoriesToGet[i])
+        .doc(categoriesToGet[i].id)
         .get()
         .then((category) => {
           categoriesToGet[i] = {
