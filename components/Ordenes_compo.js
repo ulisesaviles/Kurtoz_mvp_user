@@ -93,7 +93,7 @@ const Ordenes_compo = () => {
         <Text style={styles.updater}>{updater}</Text>
       </View>
       <View style={styles.container}>
-        <ScrollView>
+        <ScrollView style={styles.ScrollView}>
           <>
             {orders.map((order) => (
               <TouchableOpacity
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    height: "100%",
+    height: "93%",
     backgroundColor: "rgb(240,240,240)",
     justifyContent: "space-around",
   },
@@ -146,11 +146,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(255,255,255)",
     height: "7%",
     alignContent: "center",
+    justifyContent: "center",
     flexDirection: "row",
   },
   title: {
-    marginLeft: "10%",
-    fontSize: 35,
+    marginTop: 10,
+    fontSize: 30,
     fontWeight: "500",
   },
   ordenContainer: {
@@ -179,6 +180,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "400",
     marginBottom: 5,
+  },
+  ScrollView: {
+    height: "100%",
   },
 });
 

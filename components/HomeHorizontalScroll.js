@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import Restaurant_medium from "./Restaurant_medium";
 import Food_medium from "./Food_medium";
-import firebase from "../database/database";
 
 const HomeHorizontalScroll = (props) => {
   function capitalize(word) {
@@ -36,10 +35,9 @@ const HomeHorizontalScroll = (props) => {
         <ScrollView horizontal>
           {props.products.map((product) => (
             <Food_medium
-              // id={product.product}
               id={product}
-              // restaurantName={product.restaurantNameName}
-              // restaurantId={product.restaurantId}
+              restaurantName={props.restaurantName}
+              restaurantId={props.restaurantId}
             />
           ))}
         </ScrollView>

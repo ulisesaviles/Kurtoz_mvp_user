@@ -46,8 +46,6 @@ const Orden_compo = ({ route }) => {
       return "Dic";
     }
   }
-  console.log(route.params.order);
-  console.log(route.params.order.data.restaurantImg);
   return (
     <View style={styles.container}>
       <ScrollView style={styles.ScrollView}>
@@ -248,11 +246,11 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
   },
   totalStr: {
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: "400",
   },
   totalNum: {
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: "300",
   },
   ScrollView: {},

@@ -259,18 +259,20 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    height: "89%",
+    height: "93%",
     backgroundColor: "rgb(240,240,240)",
     justifyContent: "space-between",
   },
   header: {
     backgroundColor: "rgb(255,255,255)",
-    height: "10%",
+    height: "7%",
+    alignContent: "center",
     justifyContent: "center",
+    flexDirection: "row",
   },
   title: {
-    marginLeft: "12%",
-    fontSize: 40,
+    marginTop: 10,
+    fontSize: 30,
     fontWeight: "500",
   },
   itemsContainer: {
@@ -297,7 +299,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(255, 255, 255)",
     width: "100%",
     alignItems: "center",
-    marginTop: "2%",
+    marginTop: 2,
     paddingTop: "8%",
     paddingBottom: "8%",
   },

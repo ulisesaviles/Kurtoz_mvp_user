@@ -33,10 +33,9 @@ const Buscar_compo = ({ navigation }) => {
               name: restaurant.data().name,
               type: "restaurant",
             });
-            getProductsFrom(restaurant.id);
+            getProductsFrom(restaurant.id, restaurant.data().name);
           });
         });
-      console.log(productsNRestaurants_);
     }
   }
 
@@ -46,11 +45,17 @@ const Buscar_compo = ({ navigation }) => {
     if (object.type == "restaurant") {
       return <Restaurant_medium restaurantId={object.id} />;
     } else if (object.type == "product") {
-      return <Food_medium id={object.id} />;
+      return (
+        <Food_medium
+          id={object.id}
+          restaurantId={object.restaurantId}
+          restaurantName={object.restaurantName}
+        />
+      );
     }
   }
 
-  async function getProductsFrom(restaurantId) {
+  async function getProductsFrom(restaurantId, restaurantName) {
     await firebase
       .firestore()
       .collection("restaurants")
@@ -64,11 +69,12 @@ const Buscar_compo = ({ navigation }) => {
               id: product.id,
               name: product.data().name,
               type: "product",
+              restaurantId: restaurantId,
+              restaurantName: restaurantName,
             });
           }
         });
       });
-    console.log(productsNRestaurants_);
     setProductsNRestaurants(productsNRestaurants_);
   }
   const [textInput, setTextInput] = useState("");

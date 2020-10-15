@@ -56,6 +56,7 @@ const Home_compo = ({ navigation }) => {
         .then((restaurants) => {
           restaurants.forEach((restaurant) => {
             restauranstIds.push(restaurant.id);
+            getCategories(restaurant.id, restaurant.data().name);
           });
         })
         .then(() => {
@@ -67,10 +68,8 @@ const Home_compo = ({ navigation }) => {
     }
   }
   getRestaurants();
-  if (categories.length == 0) {
-    getCategories(kurtozId);
-  }
-  async function getCategories(restaurantId) {
+
+  async function getCategories(restaurantId, restaurantName) {
     await firebase
       .firestore()
       .collection("restaurants")
@@ -80,6 +79,8 @@ const Home_compo = ({ navigation }) => {
       .then((snapshot) => {
         snapshot.forEach((category) => {
           let cat = {
+            restaurantId: restaurantId,
+            restaurantName: restaurantName,
             id: category.id,
             name: category.data().name,
             products: category.data().products,
@@ -98,7 +99,6 @@ const Home_compo = ({ navigation }) => {
     );
   }
   randomizeArray(categories);
-  // console.log(categories);
 
   return (
     <SafeAreaView style={styles.SafeAreaView_}>
@@ -117,6 +117,8 @@ const Home_compo = ({ navigation }) => {
               id={category.name}
               category={category.name}
               restaurants={restauranstIds}
+              restaurantId={category.restaurantId}
+              restaurantName={category.restaurantName}
             />
           ))}
         </ScrollView>

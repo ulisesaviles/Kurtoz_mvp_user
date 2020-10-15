@@ -25,7 +25,7 @@ function Food_medium(props) {
     }
     return word;
   }
-  getProduct("tpiauGjqb5yg1bA7qJmm", "Kurtoz", props.id);
+  getProduct(props.restaurantId, props.restaurantName, props.id);
 
   async function getProduct(restaurantId, restaurantName, productId) {
     if (
