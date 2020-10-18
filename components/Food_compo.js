@@ -11,6 +11,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import firebase from "../database/database";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Food_compo = ({ navigation, route }) => {
   const [title, setTitle] = useState(" - - -");
@@ -30,6 +31,24 @@ const Food_compo = ({ navigation, route }) => {
   const [booleanVariants, setBooleanVariants] = useState([]);
   const [cuantity, setCuantity] = useState(1);
   const [price, setPrice] = useState(" -");
+  const [userData, setUserData] = useState("");
+  const [gotUser, setGotUser] = useState(false);
+
+  async function getUser() {
+    if (!gotUser) {
+      setGotUser(true);
+      try {
+        let value = await AsyncStorage.getItem("userData");
+        value = JSON.parse(value);
+        if (value !== null) {
+          setUserData(value);
+          console.log(value);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
 
   function capitalize(word) {
     arr = word.split(" ");
@@ -62,8 +81,10 @@ const Food_compo = ({ navigation, route }) => {
       title == " - - -" &&
       img == "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif" &&
       modifiers.length == 0 &&
-      description == " - - - - - - - - - - - - - - - - - - -\n - - -"
+      description == " - - - - - - - - - - - - - - - - - - -\n - - -" &&
+      gotUser == false
     ) {
+      getUser();
       await firebase
         .firestore()
         .collection("restaurants")
@@ -101,35 +122,39 @@ const Food_compo = ({ navigation, route }) => {
   }
 
   async function pushCart() {
-    let itemToPush = {
-      productName: title,
-      productPrice: price,
-      productImg: img,
-      restaurantId: route.params.restaurantId,
-      productId: route.params.foodId,
-      cuantity: cuantity,
-      modifires: [],
-      variant: variant,
-      variantIndex: variantIndex,
-    };
-    for (let i = 0; i < booleanModifiers.length; i++) {
-      if (booleanModifiers[i] == 1) {
-        itemToPush.modifires.push({
-          id: modifiers[i].id,
-          name: modifiers[i].name,
-          price: modifiers[i].price,
-        });
-        itemToPush.productPrice += modifiers[i].price;
+    if (userData.id == "") {
+      navigation.navigate("LogOrSign");
+    } else {
+      let itemToPush = {
+        productName: title,
+        productPrice: price,
+        productImg: img,
+        restaurantId: route.params.restaurantId,
+        productId: route.params.foodId,
+        cuantity: cuantity,
+        modifires: [],
+        variant: variant,
+        variantIndex: variantIndex,
+      };
+      for (let i = 0; i < booleanModifiers.length; i++) {
+        if (booleanModifiers[i] == 1) {
+          itemToPush.modifires.push({
+            id: modifiers[i].id,
+            name: modifiers[i].name,
+            price: modifiers[i].price,
+          });
+          itemToPush.productPrice += modifiers[i].price;
+        }
       }
+      getCurrentCart(itemToPush);
     }
-    getCurrentCart(itemToPush);
   }
 
   async function getCurrentCart(itemToPush) {
     await firebase
       .firestore()
       .collection("users")
-      .doc("CydewFVojffkrVbBuQQF")
+      .doc(userData.id)
       .get()
       .then((user) => {
         updateCart(user.data().cart.items, itemToPush);
@@ -144,7 +169,7 @@ const Food_compo = ({ navigation, route }) => {
     await firebase
       .firestore()
       .collection("users")
-      .doc("CydewFVojffkrVbBuQQF")
+      .doc(userData.id)
       .set(
         {
           cart: { items: currentCart, restaurantId: route.params.restaurantId },
@@ -209,7 +234,7 @@ const Food_compo = ({ navigation, route }) => {
                     }
                     booleanVariants[variants.indexOf(variant)] = 2;
                     setVariant(variants[variants.indexOf(variant)].name);
-                    setVariantIndex(variants[variants.indexOf(variant)]);
+                    setVariantIndex(variants.indexOf(variant));
                     setPrice(variants[variants.indexOf(variant)].price);
                     update(`${booleanVariants}`);
                   }}

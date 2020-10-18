@@ -6,7 +6,7 @@ import { StyleSheet, View } from "react-native";
 import Home_compo from "../components/Home_compo";
 import Food_compo from "../components/Food_compo";
 import Restaurant_compo from "../components/Restaurant_compo";
-import Cart_compo from "../components/Cart_compo";
+
 const Stack = createStackNavigator();
 
 const HomeScreen = () => {
@@ -18,6 +18,7 @@ const HomeScreen = () => {
           component={Home_compo}
           options={{ headerTransparent: "true", title: "" }}
         />
+
         <Stack.Screen
           name="Restaurant_compo"
           component={Restaurant_compo}

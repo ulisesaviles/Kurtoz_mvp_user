@@ -11,22 +11,43 @@ import {
 import firebase from "../database/database";
 import "react-native-gesture-handler";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Cart_compo = ({ navigation, route }) => {
   const [total, setTotal] = useState(0);
   const [restaurantName, setRestaurantName] = useState(" - - - ");
   const [restaurantImg, setRestaurantImg] = useState("");
-
   const [requestDone, setRequestDone] = useState(false);
   const [cart, setCart] = useState([]);
   const [restaurantId, setRestaurantId] = useState(" -");
+  let userData;
+  const [userData_, setUserData_] = useState("");
+  const [gotUser, setGotUser] = useState(false);
+
+  async function getUser() {
+    if (!gotUser) {
+      setGotUser(true);
+      try {
+        let value = await AsyncStorage.getItem("userData");
+        value = JSON.parse(value);
+        if (value !== null) {
+          userData = value;
+          setUserData_(userData);
+          console.log(value);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
 
   async function getCart() {
-    if (requestDone == false) {
+    if (requestDone == false && !gotUser) {
+      await getUser();
       await firebase
         .firestore()
         .collection("users")
-        .doc("CydewFVojffkrVbBuQQF")
+        .doc(userData.id)
         .onSnapshot((user) => {
           setRequestDone(true);
           setCart(user.data().cart.items);
@@ -74,6 +95,7 @@ const Cart_compo = ({ navigation, route }) => {
     let product;
     for (let i = 0; i < cart.length; i++) {
       product = cart[i];
+      console.log(product);
       let modifiers = [];
       for (let j = 0; j < product.modifires.length; j++) {
         modifiers.push({
@@ -93,15 +115,12 @@ const Cart_compo = ({ navigation, route }) => {
       type: "active",
       total: total,
       user: {
-        name: "Ulises tu puto rey",
-        id: "CydewFVojffkrVbBuQQF",
+        name: userData.name,
+        id: userData.id,
       },
-      createdAt: {
-        seconds: Math.floor(today / 1000),
-      },
+      createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
       products: restaurantCart,
     };
-    // console.log(restaurantOrder);
 
     await firebase
       .firestore()
@@ -113,7 +132,7 @@ const Cart_compo = ({ navigation, route }) => {
     await firebase
       .firestore()
       .collection("users")
-      .doc("CydewFVojffkrVbBuQQF")
+      .doc(userData.id)
       .collection("orders")
       .add(userOrder);
 
@@ -124,7 +143,7 @@ const Cart_compo = ({ navigation, route }) => {
     await firebase
       .firestore()
       .collection("users")
-      .doc("CydewFVojffkrVbBuQQF")
+      .doc(userData_.id)
       .update({ cart: { restaurantId: restaurantId, items: cart_ } });
   }
 

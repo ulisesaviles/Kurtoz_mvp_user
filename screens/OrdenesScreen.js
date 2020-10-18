@@ -7,6 +7,7 @@ import Ordenes_compo from "../components/Ordenes_compo";
 import Restaurant_compo from "../components/Restaurant_compo";
 import Food_compo from "../components/Food_compo";
 import Orden_compo from "../components/Orden_compo";
+
 const Stack = createStackNavigator();
 
 const BuscarScreen = () => {
@@ -18,6 +19,7 @@ const BuscarScreen = () => {
           component={Ordenes_compo}
           options={{ headerTransparent: "true", title: "" }}
         />
+
         <Stack.Screen
           name="Restaurant_compo"
           component={Restaurant_compo}

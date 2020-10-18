@@ -6,6 +6,7 @@ import { StyleSheet, View } from "react-native";
 import Cart_compo from "../components/Cart_compo";
 import Restaurant_compo from "../components/Restaurant_compo";
 import Food_compo from "../components/Food_compo";
+
 const Stack = createStackNavigator();
 
 const CartScreen = () => {
@@ -17,6 +18,7 @@ const CartScreen = () => {
           component={Cart_compo}
           options={{ headerTransparent: "true", title: "" }}
         />
+
         <Stack.Screen
           name="Restaurant_compo"
           component={Restaurant_compo}

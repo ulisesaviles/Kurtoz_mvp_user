@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,31 +9,54 @@ import {
   SafeAreaView,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-community/async-storage";
 
-const Perfil = ({ navigation }) => {
+const Perfil = ({ navigation, route }) => {
+  const [userName, setUserName] = useState("Iniciar Sesión");
+  const [editAccount, setEdit] = useState("Editar perfil");
+  let userData = {};
+  const [gotUser, setGotUser] = useState(false);
+
+  async function getUser() {
+    if (!gotUser) {
+      setGotUser(true);
+      try {
+        userData = JSON.parse(await AsyncStorage.getItem("userData"));
+        setUserName(userData.name);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+  getUser();
+  async function storeData(value) {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("userData", jsonValue);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.SafeAreaView_}>
       <View style={styles.header} />
       <View style={styles.scrollContainer}>
         <ScrollView>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("EditAccount");
-            }}
-          >
+          <TouchableOpacity>
             <View style={styles.profileContainer}>
               <View style={styles.ppContainer}>
-                <Image
-                  source={{
-                    uri:
-                      "https://scontent.ftij1-1.fna.fbcdn.net/v/t1.0-9/81383950_470288483681697_6573081785897320448_n.jpg?_nc_cat=100&_nc_sid=09cbfe&_nc_eui2=AeEATNOpqls28H2ysVHc4VQY9gTs0qIATfP2BOzSogBN892TtGRUCd2LCaqzdbugmzLYsYF3DsPU_zwwYpaTWYEN&_nc_ohc=vR8f5E0PrRIAX-I51KQ&_nc_ht=scontent.ftij1-1.fna&oh=14878a616e2932b30deb2fdb910c9bf6&oe=5F83024E",
-                  }}
+                <MaterialIcons
+                  name={"account-circle"}
+                  size={60}
+                  color={"black"}
                   style={styles.pp}
                 />
               </View>
               <View style={styles.profileTextContainer}>
-                <Text style={styles.userName}>Ulises Aviles</Text>
-                <Text style={styles.editAccount}>Editar Perfil</Text>
+                <Text style={styles.userName}>{userName}</Text>
+                <Text style={styles.editAccount}>{editAccount}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -97,6 +120,26 @@ const Perfil = ({ navigation }) => {
               <Text style={styles.settingTitle}>Acerca del app</Text>
             </View>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={async () => {
+              navigation.navigate("LogOrSign");
+              await storeData({
+                email: "",
+                name: "",
+                id: "",
+              });
+            }}
+          >
+            <View style={styles.settingContainer}>
+              <MaterialCommunityIcons
+                name="logout"
+                size={24}
+                color="black"
+                style={styles.settingLogo}
+              />
+              <Text style={styles.settingTitle}>Cerrar sesión</Text>
+            </View>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -125,12 +168,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   pp: {
-    height: 80,
-    width: 80,
+    height: 60,
+    width: 60,
     borderRadius: 50,
     margin: "8%",
   },
   profileTextContainer: {
+    // backgroundColor: "red",
     justifyContent: "center",
     margin: "-10%",
   },

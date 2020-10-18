@@ -11,19 +11,40 @@ import {
 } from "react-native";
 import firebase from "../database/database";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Ordenes_compo = () => {
   const navigation = useNavigation();
   const [orders, setOrders] = useState([]);
   const [updater, update] = useState("");
   const [doneRequest, setDoneRequest] = useState(false);
+  let userData;
+  const [gotUser, setGotUser] = useState(false);
+
+  async function getUser() {
+    if (!gotUser) {
+      setGotUser(true);
+      try {
+        let value = await AsyncStorage.getItem("userData");
+        value = JSON.parse(value);
+        if (value !== null) {
+          userData = value;
+          console.log(value);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
   async function getOrders() {
-    if (!doneRequest) {
+    if (!doneRequest && !gotUser) {
+      await getUser();
+      console.log(userData);
       setDoneRequest(true);
       await firebase
         .firestore()
         .collection("users")
-        .doc("CydewFVojffkrVbBuQQF")
+        .doc(userData.id)
         .collection("orders")
         .onSnapshot((orders_) => {
           let orders__ = [];

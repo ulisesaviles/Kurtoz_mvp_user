@@ -4,7 +4,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet, View } from "react-native";
 
 import Perfil_compo from "../components/Perfil_compo";
-import EditAccount from "../components/EditAccount";
 import Favorites from "../components/Favorites";
 import PaymentMethod from "../components/PaymentMethod";
 import Help from "../components/Help";
@@ -23,7 +22,6 @@ const PerfilScreen = () => {
           component={Perfil_compo}
           options={{ headerTransparent: "true", title: "" }}
         />
-        <Stack.Screen name="EditAccount" component={EditAccount} />
         <Stack.Screen
           name="Tus Favoritos"
           component={Favorites}

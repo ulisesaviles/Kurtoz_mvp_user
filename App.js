@@ -1,65 +1,81 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import Home from "./screens/HomeScreen";
-import BuscarScreen from "./screens/BuscarScreen";
-import Ordenes from "./screens/OrdenesScreen";
-import PerfilScreen from "./screens/PerfilScreen";
-import CartScreen from "./screens/CartScreen";
-const Tab = createBottomTabNavigator();
-import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-community/async-storage";
+import Root from "./screens/RootScreen";
+import LogOrSign from "./components/LogOrSign";
+import { createStackNavigator } from "@react-navigation/stack";
+const Stack = createStackNavigator();
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 
 export default function App() {
+  const [gotUser, setGotUser] = useState(false);
+  let userData = {};
+  getUser();
+  async function getUser() {
+    if (!gotUser) {
+      setGotUser(true);
+      try {
+        let value = await AsyncStorage.getItem("userData");
+        userData = JSON.parse(value);
+        console.log(userData.id);
+      } catch (e) {
+        storeData({ name: "", email: "", id: "" });
+      }
+    }
+  }
+
+  async function storeData(value) {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("userData", jsonValue);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => {
-            if (route.name === "Inicio") {
-              return <MaterialIcons name={"home"} size={size} color={color} />;
-            } else if (route.name === "Buscar") {
-              return (
-                <MaterialIcons name={"search"} size={size} color={color} />
-              );
-            } else if (route.name === "Cart") {
-              return (
-                <MaterialIcons
-                  name={"shopping-cart"}
-                  size={size}
-                  color={color}
-                />
-              );
-            } else if (route.name === "Cuenta") {
-              return (
-                <MaterialIcons
-                  name={"account-circle"}
-                  size={size}
-                  color={color}
-                />
-              );
-            } else if (route.name === "Órdenes") {
-              return (
-                <MaterialIcons name={"receipt"} size={size} color={color} />
-              );
-            }
-          },
-        })}
-        tabBarOptions={{
-          activeTintColor: "black",
-          inactiveTintColor: "gray",
-        }}
-      >
-        <Tab.Screen name="Inicio" component={Home} />
-        <Tab.Screen name="Buscar" component={BuscarScreen} />
-        <Tab.Screen name="Cart" component={CartScreen} />
-        <Tab.Screen name="Órdenes" component={Ordenes} />
-        <Tab.Screen name="Cuenta" component={PerfilScreen} />
-      </Tab.Navigator>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="LogOrSign"
+            component={LogOrSign}
+            options={{
+              headerTransparent: "true",
+              title: "",
+            }}
+          />
+          <Stack.Screen
+            name="Root"
+            component={Root}
+            options={{
+              headerTransparent: "true",
+              title: "",
+              headerLeft: null,
+            }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{
+              headerTransparent: "true",
+              title: "",
+            }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{
+              headerTransparent: "true",
+              title: "",
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
       <StatusBar style={"dark"} />
-    </NavigationContainer>
+    </>
   );
 }
-
-// const styles = StyleSheet.create({});

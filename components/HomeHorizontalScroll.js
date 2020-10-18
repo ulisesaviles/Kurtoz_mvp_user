@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     marginBottom: "2%",
     fontWeight: "500",
     color: "rgb(40,40,40)",
+    marginTop: "2%",
   },
 });
 

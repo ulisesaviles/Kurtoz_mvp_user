@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native";
 import Buscar_compo from "../components/Buscar_compo";
 import Restaurant_compo from "../components/Restaurant_compo";
 import Food_compo from "../components/Food_compo";
+
 const Stack = createStackNavigator();
 
 const BuscarScreen = () => {
@@ -16,6 +17,7 @@ const BuscarScreen = () => {
           component={Buscar_compo}
           options={{ headerTransparent: "true", title: "" }}
         />
+
         <Stack.Screen
           name="Restaurant_compo"
           component={Restaurant_compo}
