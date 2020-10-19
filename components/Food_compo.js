@@ -122,32 +122,28 @@ const Food_compo = ({ navigation, route }) => {
   }
 
   async function pushCart() {
-    if (userData.id == "") {
-      navigation.navigate("LogOrSign");
-    } else {
-      let itemToPush = {
-        productName: title,
-        productPrice: price,
-        productImg: img,
-        restaurantId: route.params.restaurantId,
-        productId: route.params.foodId,
-        cuantity: cuantity,
-        modifires: [],
-        variant: variant,
-        variantIndex: variantIndex,
-      };
-      for (let i = 0; i < booleanModifiers.length; i++) {
-        if (booleanModifiers[i] == 1) {
-          itemToPush.modifires.push({
-            id: modifiers[i].id,
-            name: modifiers[i].name,
-            price: modifiers[i].price,
-          });
-          itemToPush.productPrice += modifiers[i].price;
-        }
+    let itemToPush = {
+      productName: title,
+      productPrice: price,
+      productImg: img,
+      restaurantId: route.params.restaurantId,
+      productId: route.params.foodId,
+      cuantity: cuantity,
+      modifires: [],
+      variant: variant,
+      variantIndex: variantIndex,
+    };
+    for (let i = 0; i < booleanModifiers.length; i++) {
+      if (booleanModifiers[i] == 1) {
+        itemToPush.modifires.push({
+          id: modifiers[i].id,
+          name: modifiers[i].name,
+          price: modifiers[i].price,
+        });
+        itemToPush.productPrice += modifiers[i].price;
       }
-      getCurrentCart(itemToPush);
     }
+    getCurrentCart(itemToPush);
   }
 
   async function getCurrentCart(itemToPush) {

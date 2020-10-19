@@ -8,11 +8,21 @@ import {
   TouchableOpacity,
 } from "react-native";
 import firebase from "../database/database";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  async function storeData(value) {
+    console.log(value);
+    try {
+      // const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("userData", value);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   async function handlePress() {
     let user = {
@@ -25,6 +35,23 @@ const SignUp = ({ navigation }) => {
       },
     };
     await firebase.firestore().collection("users").add(user);
+    await firebase
+      .firestore()
+      .collection("users")
+      .get()
+      .then((users) => {
+        users.forEach(async (user) => {
+          if (user.data().email == email && user.data().name == name) {
+            storeData(
+              JSON.stringify({
+                email: email,
+                name: user.data().name,
+                id: user.id,
+              })
+            );
+          }
+        });
+      });
     navigation.navigate("Root");
   }
 

@@ -29,11 +29,6 @@ const HomeScreen = () => {
           component={Food_compo}
           options={{ headerTransparent: "true", title: "" }}
         />
-        {/* <Stack.Screen
-          name="Cart"
-          component={Cart_compo}
-          options={{ headerTransparent: "true", title: "" }}
-        /> */}
       </Stack.Navigator>
     </View>
   );

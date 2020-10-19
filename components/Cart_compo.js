@@ -115,8 +115,8 @@ const Cart_compo = ({ navigation, route }) => {
       type: "active",
       total: total,
       user: {
-        name: userData.name,
-        id: userData.id,
+        name: userData_.name,
+        id: userData_.id,
       },
       createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
       products: restaurantCart,
@@ -132,7 +132,7 @@ const Cart_compo = ({ navigation, route }) => {
     await firebase
       .firestore()
       .collection("users")
-      .doc(userData.id)
+      .doc(userData_.id)
       .collection("orders")
       .add(userOrder);
 
