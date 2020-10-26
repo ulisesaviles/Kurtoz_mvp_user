@@ -1345,3 +1345,6 @@ Issues? Report them at https://github.com/firebase/firebase-tools/issues and att
 [info] i  functions: Finished "pay" in ~2s {"metadata":{"emulator":{"name":"functions"},"function":{"name":"pay"},"message":"Finished \"pay\" in ~2s"}}
 [debug] [2020-10-26T19:41:55.675Z] [worker-pay-fc1fb666-381a-4f7c-a598-009363ac6878]: IDLE {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pay-fc1fb666-381a-4f7c-a598-009363ac6878]: IDLE"}}
 [debug] [2020-10-26T19:41:55.675Z] [work-queue] {"queueLength":0,"workRunningCount":0}
+[debug] [2020-10-26T20:06:56.765Z] [worker-pay-506ec84a-8bac-4d0d-ab42-62f6c50fb318]: exited {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pay-506ec84a-8bac-4d0d-ab42-62f6c50fb318]: exited"}}
+[debug] [2020-10-26T20:06:56.765Z] [worker-pay-506ec84a-8bac-4d0d-ab42-62f6c50fb318]: FINISHED {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pay-506ec84a-8bac-4d0d-ab42-62f6c50fb318]: FINISHED"}}
+[debug] [2020-10-26T20:06:56.773Z] Received signal SIGHUP 1
