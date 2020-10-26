@@ -11,8 +11,8 @@ admin.initializeApp({
   databaseURL: "https://food-delivery-app-86ccd.firebaseio.com",
 });
 
-// Setup Stripe user (should be called when creating an app user)
 exports.createStripeUser = functions.https.onRequest(
+  // Need: user Id
   async (request, response) => {
     let email;
     try {
@@ -50,72 +50,54 @@ exports.createStripeUser = functions.https.onRequest(
   }
 );
 
-exports.setPaymentMethod = functions.https.onRequest(
-  // Need: userId, paymentMethod
-  (request, response) => {
-    return cors(request, response, async () => {
-      try {
-        console.log("function");
-        await admin
-          .firestore()
-          .collection("users")
-          .doc(request.body.userId)
-          .set(
-            {
-              paymentMethod: request.body.paymentMethod,
-            },
-            { merge: true }
-          );
-        return (
-          response
-            // .set({ "Access-Control-Allow-Origin": "*" })
-            .status(200)
-            .json({
-              status: "success",
-              userId: request.body.userId,
-              paymentMethod: request.body.paymentMethod,
-            })
-        );
-      } catch (error) {
-        return response.status(500).json({ msg: `Server error: ${error}` });
-      }
-    });
-  }
-);
-
 exports.pay = functions.https.onRequest(async (request, response) => {
-  // Need: ammoutToPay, userId
-  try {
-    let card;
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: request.body.ammountToPay,
-      currency: "mxn",
-      metadata: { ammountToPay: request.body.ammountToPay },
-    });
-    await admin
-      .firestore()
-      .collection("users")
-      .doc(request.body.userId)
-      .get()
-      .then((user) => {
-        card = user.data().paymentMethod;
-      });
-    const clientSecret = paymentIntent.client_secret;
-    await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: card,
-        billing_details: {
-          name: "x x x",
+  // Need: ammountToPay, userId, paymentMethod
+  return cors(request, response, async () => {
+    try {
+      console.log(request.body);
+      let card = request.body.paymentMethod;
+      let customer;
+      await admin
+        .firestore()
+        .collection("users")
+        .doc(request.body.userId)
+        .get()
+        .then((user) => {
+          customer = user.data().customerId;
+          console.log(card);
+        });
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: request.body.ammountToPay,
+        currency: "mxn",
+        payment_method_data: {
+          type: "card",
+          card: {
+            token: card.id,
+          },
         },
-      },
-    });
-    return response.status(200).json({
-      status: "success",
-      userId: request.body.userId,
-      card: "**** **** **** " + card.card.last4,
-      paymentMethod: request.body.paymentMethod,
-    });
-  } catch (error) {
-    return response.status(500).json({ msg: `Server error: ${error}` });
-  }
+        off_session: false,
+        confirm: true,
+        customer: customer,
+      });
+      console.log(paymentIntent);
+      const clientSecret = paymentIntent.client_secret;
+      console.log(clientSecret);
+      // await stripe.confirmCardPayment(clientSecret, {
+      //   // payment_method: {
+      //   //   card: card.id,
+      //   //   billing_details: {
+      //   //     name: "Ulises Aviles",
+      //   //   },
+      //   // },
+      // });
+      return response.status(200).json({
+        status: "success",
+        userId: request.body.userId,
+        card: "**** **** **** " + card.card.last4,
+        paymentMethod: request.body.paymentMethod,
+      });
+    } catch (error) {
+      return response.status(500).json({ msg: `Server error: ${error}` });
+    }
+  });
 });

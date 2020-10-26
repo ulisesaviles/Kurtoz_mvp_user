@@ -4,12 +4,13 @@
     <meta charset="utf-8" />
     <title>Stripe Card Payments</title>
     <meta name="description" content="Payments handler" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
     <script src="https://js.stripe.com/v3/"></script>
     <style>
       body {
         padding: 5vw;
         margin: 0;
+        /* height: 500px; */
       }
 
       .StripeElement {
@@ -26,6 +27,17 @@
         box-shadow: 0 1px 3px 0 #e6ebf1;
         -webkit-transition: box-shadow 150ms ease;
         transition: box-shadow 150ms ease;
+      }
+      
+      .success-container {
+        background-color: white;
+        text-align: center;
+        height: auto;
+      }
+
+      .success {
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 700;
       }
 
       .StripeElement--focus {
@@ -85,23 +97,11 @@
         margin-top: 5px;
       }
 
-      .title {
-        text-align: center;
-        font-family: Arial, Helvetica, sans-serif;
-        font-weight: 700;
-        margin-top: 5vh;
-        margin-bottom: 5vh;
-        font-size: 2em;
-      }
     </style>
   </head>
 
-  <body>
-    <div class="title">
-      <h1>
-        Título
-      </h1>
-    </div>
+  <body id="body" class="body">
+
     <!-- <form action="/charge" method="post" id="payment-form"> -->
     <form id="payment-form">
       <div class="form-row">
@@ -118,7 +118,7 @@
         <div id="card-errors" role="alert" class="errors"></div>
       </div>
     
-      <button class="submit-btn">Guardar método de pago</button>
+      <button class="submit-btn">Realizar pago</button>
       <div class="extra-info-container">
         <div class="powered-by-container">
           <h3>Proveído por </h3>
@@ -129,6 +129,7 @@
         <!-- <script src="script.js"></script> -->
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script>
+          
           var stripe = Stripe(
             "pk_test_51HYM73FJbeEVXG7GYXRhTfmJ7c4u92BMFAslCd4DydDRqJYCPETbLJO5dwz1nAK3rXSrPaJKKoRldB32fAtyQtsr00UmzwIdiT"
           );
@@ -173,43 +174,47 @@
           var form = document.getElementById("payment-form");
           form.addEventListener("submit", function (event) {
             event.preventDefault();
-
+            // location.reload()
+            
             stripe.createToken(card).then(async function (result) {
               if (result.error) {
                 // Inform the user if there was an error.
                 var errorElement = document.getElementById("card-errors");
+                Document.getElementById
                 errorElement.textContent = result.error.message;
               } else {
                 // Send the token to your server.
                 console.log(result.token);
                 await axios({
-                  method: "get",
-                  url: "http://localhost:5001/food-delivery-app-86ccd/us-central1/setPaymentMethod",
+                  method: "post",
+                  url: "http://localhost:5001/food-delivery-app-86ccd/us-central1/pay",
                   data: {                   
                     userId : "CydewFVojffkrVbBuQQF",
-                    paymentMethod : "result.token"
+                    paymentMethod : result.token,
+                    ammountToPay : 1999
                   },
                 }).then((Response) => {
                   console.log(Response);
-                  // stripeTokenHandler(result.token);
+                  location.reload()
+                  // successHandler();
                 });
               }
             });
           });
 
           // Submit the form with the token ID.
-          function stripeTokenHandler(token) {
-            // Insert the token ID into the form so it gets submitted to the server
-            var form = document.getElementById("payment-form");
-            var hiddenInput = document.createElement("input");
-            hiddenInput.setAttribute("type", "hidden");
-            hiddenInput.setAttribute("name", "stripeToken");
-            hiddenInput.setAttribute("value", token.id);
-            form.appendChild(hiddenInput);
-            // Submit the form
-            form.submit();
+          function successHandler(token) {
+            // // Insert the token ID into the form so it gets submitted to the server
+            // var form = document.getElementById("payment-form");
+            // var hiddenInput = document.createElement("input");
+            // hiddenInput.setAttribute("type", "hidden");
+            // hiddenInput.setAttribute("name", "stripeToken");
+            // hiddenInput.setAttribute("value", token.id);
+            // form.appendChild(hiddenInput);
+            // // Submit the form
+            // form.submit();
           }
-
+          
         </script>
   </body>
 </html>

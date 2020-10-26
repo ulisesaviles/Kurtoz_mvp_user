@@ -33,7 +33,7 @@ const Cart_compo = ({ navigation, route }) => {
         if (value !== null) {
           userData = value;
           setUserData_(userData);
-          console.log(value);
+          // console.log(value);
         }
       } catch (e) {
         console.log(e);
@@ -95,7 +95,7 @@ const Cart_compo = ({ navigation, route }) => {
     let product;
     for (let i = 0; i < cart.length; i++) {
       product = cart[i];
-      console.log(product);
+      // console.log(product);
       let modifiers = [];
       for (let j = 0; j < product.modifires.length; j++) {
         modifiers.push({
@@ -122,22 +122,27 @@ const Cart_compo = ({ navigation, route }) => {
       products: restaurantCart,
     };
 
-    await firebase
-      .firestore()
-      .collection("restaurants")
-      .doc(restaurantId)
-      .collection("orders")
-      .add(restaurantOrder);
+    // await firebase
+    //   .firestore()
+    //   .collection("restaurants")
+    //   .doc(restaurantId)
+    //   .collection("orders")
+    //   .add(restaurantOrder);
 
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(userData_.id)
-      .collection("orders")
-      .add(userOrder);
+    // await firebase
+    //   .firestore()
+    //   .collection("users")
+    //   .doc(userData_.id)
+    //   .collection("orders")
+    //   .add(userOrder);
 
-    setRestaurantId(" -");
-    updateCart([]);
+    navigation.navigate("Pay", {
+      restaurantOrder: restaurantOrder,
+      userOrder: userOrder,
+    });
+
+    // setRestaurantId(" -");
+    // updateCart([]);
   }
   async function updateCart(cart_) {
     await firebase

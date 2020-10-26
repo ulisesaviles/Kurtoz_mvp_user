@@ -1,5 +1,4 @@
 import React from "react";
-import "react-native-gesture-handler";
 import { StyleSheet, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
 import "react-native-gesture-handler";

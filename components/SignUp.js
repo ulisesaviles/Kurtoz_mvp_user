@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import firebase from "../database/database";
 import AsyncStorage from "@react-native-community/async-storage";
+import axios from "axios";
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -49,6 +50,16 @@ const SignUp = ({ navigation }) => {
                 id: user.id,
               })
             );
+            await axios({
+              method: "post",
+              url:
+                "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createStripeUser",
+              data: {
+                id: user.id,
+              },
+            }).then((response) => {
+              console.log(response);
+            });
           }
         });
       });
