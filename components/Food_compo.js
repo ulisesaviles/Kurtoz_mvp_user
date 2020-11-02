@@ -7,11 +7,13 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ImageBackground,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import firebase from "../database/database";
 import AsyncStorage from "@react-native-community/async-storage";
+import GoBackBtn from "./GoBackBtn";
 
 const Food_compo = ({ navigation, route }) => {
   const [title, setTitle] = useState(" - - -");
@@ -206,12 +208,14 @@ const Food_compo = ({ navigation, route }) => {
       <View style={styles.scrollContainer}>
         <ScrollView>
           <View style={styles.imageContainer}>
-            <Image
+            <ImageBackground
               source={{
                 uri: img,
               }}
               style={styles.backgroundImage}
-            />
+            >
+              <GoBackBtn />
+            </ImageBackground>
           </View>
           <View style={styles.descriptionContainer}>
             <Text style={styles.title}>{title}</Text>

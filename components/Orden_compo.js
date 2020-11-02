@@ -7,8 +7,10 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ImageBackground,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import GoBackBtn from "./GoBackBtn";
 
 const Orden_compo = ({ route }) => {
   const navigation = useNavigation();
@@ -50,12 +52,14 @@ const Orden_compo = ({ route }) => {
     <View style={styles.container}>
       <ScrollView style={styles.ScrollView}>
         <View style={styles.imageContainer}>
-          <Image
+          <ImageBackground
             source={{
               uri: route.params.order.data.restaurantImg,
             }}
             style={styles.img}
-          />
+          >
+            <GoBackBtn />
+          </ImageBackground>
         </View>
         <View style={styles.contentContainer}>
           <View style={styles.detailsContaienr}>

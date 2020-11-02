@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import "react-native-gesture-handler";
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  ImageBackground,
+} from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
 import Rating from "./Rating";
 import { Entypo } from "@expo/vector-icons";
 import FoodMini from "./FoodMini";
 import FoodCategory from "./FoodCategory";
 import firebase from "../database/database";
+import GoBackBtn from "./GoBackBtn";
 
 const Restaurant_compo = ({ navigation, route }) => {
   // Restaurant Details:
@@ -121,12 +129,14 @@ const Restaurant_compo = ({ navigation, route }) => {
         <View style={styles.scrollContainer}>
           <ScrollView>
             <View style={styles.imageContainer}>
-              <Image
+              <ImageBackground
                 source={{
                   uri: restaurantImg,
                 }}
                 style={styles.backgroundImage}
-              />
+              >
+                <GoBackBtn />
+              </ImageBackground>
             </View>
             <View style={styles.descriptionContainer}>
               <Text style={styles.title}>{`${restaurantName} ${updater}`}</Text>
@@ -168,12 +178,14 @@ const Restaurant_compo = ({ navigation, route }) => {
       <View style={styles.scrollContainer}>
         <ScrollView>
           <View style={styles.imageContainer}>
-            <Image
+            <ImageBackground
               source={{
                 uri: restaurantImg,
               }}
               style={styles.backgroundImage}
-            />
+            >
+              <GoBackBtn />
+            </ImageBackground>
           </View>
           <View style={styles.descriptionContainer}>
             <Text style={styles.title}>{restaurantName}</Text>
