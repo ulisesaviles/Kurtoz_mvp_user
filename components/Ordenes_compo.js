@@ -36,6 +36,21 @@ const Ordenes_compo = () => {
       }
     }
   }
+
+  function sort(array) {
+    for (let i = 0; i < array.length; i++) {
+      for (let j = 0; j < array.length - 1; j++) {
+        if (array[j].data.date < array[j + 1].data.date) {
+          let temp = array[j];
+          array[j] = array[j + 1];
+          array[j + 1] = temp;
+        }
+      }
+    }
+    console.log(array);
+    return array.slice(0, 10);
+  }
+
   async function getOrders() {
     if (!doneRequest && !gotUser) {
       await getUser();
@@ -54,6 +69,8 @@ const Ordenes_compo = () => {
               data: order.data(),
             });
           });
+          console.log(orders__);
+          orders__ = sort(orders__);
           setOrders(orders__);
           update(orders.length);
         });

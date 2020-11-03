@@ -10,8 +10,12 @@ import {
 import firebase from "../database/database";
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
+import { MaterialIcons } from "@expo/vector-icons";
+import RestaurantLogo_touchable from "./RestaurantLogo_touchable";
+import { Ionicons } from "@expo/vector-icons";
 
 const SignUp = ({ navigation }) => {
+  const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -24,46 +28,63 @@ const SignUp = ({ navigation }) => {
       console.log(e);
     }
   }
+  const [check, setCheck] = useState(-1);
 
   async function handlePress() {
-    let user = {
-      name: name,
-      email: email,
-      password: password,
-      cart: {
-        items: [],
-        restaurantId: "",
-      },
-    };
-    await firebase.firestore().collection("users").add(user);
-    await firebase
-      .firestore()
-      .collection("users")
-      .get()
-      .then((users) => {
-        users.forEach(async (user) => {
-          if (user.data().email == email && user.data().name == name) {
-            storeData(
-              JSON.stringify({
-                email: email,
-                name: user.data().name,
-                id: user.id,
-              })
-            );
-            await axios({
-              method: "post",
-              url:
-                "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createStripeUser",
-              data: {
-                id: user.id,
-              },
-            }).then((response) => {
-              console.log(response);
-            });
-          }
+    if (check == -1) {
+      setError(
+        "Debes de aceptar los términos y condiciones para crear una cuenta"
+      );
+    } else {
+      let user = {
+        name: name,
+        email: email,
+        password: password,
+        cart: {
+          items: [],
+          restaurantId: "",
+        },
+      };
+      await firebase.firestore().collection("users").add(user);
+      await firebase
+        .firestore()
+        .collection("users")
+        .get()
+        .then((users) => {
+          users.forEach(async (user) => {
+            if (user.data().email == email && user.data().name == name) {
+              storeData(
+                JSON.stringify({
+                  email: email,
+                  name: user.data().name,
+                  id: user.id,
+                })
+              );
+              await axios({
+                method: "post",
+                url:
+                  "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createStripeUser",
+                data: {
+                  id: user.id,
+                },
+              }).then((response) => {
+                console.log(response);
+              });
+            }
+          });
         });
-      });
-    navigation.navigate("Root");
+      navigation.navigate("Root");
+    }
+  }
+
+  function componentFor(value) {
+    if (value == -1) {
+      return (
+        <MaterialIcons name="check-box-outline-blank" size={24} color="black" />
+      );
+    } else {
+      return <MaterialIcons name="check-box" size={24} color="black" />;
+    }
   }
 
   return (
@@ -96,12 +117,41 @@ const SignUp = ({ navigation }) => {
             style={styles.input}
           />
         </View>
+        <View style={styles.terminosContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              setCheck(check * -1);
+            }}
+          >
+            <View style={styles.checkContainer}>{componentFor(check)}</View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.termsBtn}
+            onPress={() => {
+              navigation.navigate("Terms");
+            }}
+          >
+            <View>
+              <Text style={styles.heLeido}>He leído y acepto los</Text>
+              <Text style={styles.terms}>términos y condiciones</Text>
+            </View>
+            <Ionicons
+              name="ios-arrow-forward"
+              size={24}
+              color="black"
+              style={styles.btnArrow}
+            />
+          </TouchableOpacity>
+        </View>
         <View style={styles.btnsContainer}>
           <TouchableOpacity onPress={handlePress}>
             <View style={styles.signUpContainer}>
               <Text style={styles.btnTitle}>Crear cuenta</Text>
             </View>
           </TouchableOpacity>
+        </View>
+        <View>
+          <Text style={styles.error}>{error}</Text>
         </View>
       </View>
     </View>
@@ -151,6 +201,32 @@ const styles = StyleSheet.create({
   btnsContainer: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  terminosContainer: {
+    flexDirection: "row",
+    alignContent: "flex-start",
+    justifyContent: "center",
+  },
+  heLeido: {
+    marginLeft: "5%",
+  },
+  terms: {
+    marginLeft: "5%",
+    color: "rgb(0,0,255)",
+    textDecorationLine: "underline",
+  },
+  error: {
+    color: "rgb(200, 0, 0)",
+    fontWeight: "500",
+    alignSelf: "center",
+    marginTop: "4%",
+    textAlign: "center",
+  },
+  termsBtn: {
+    flexDirection: "row",
+  },
+  btnArrow: {
+    marginLeft: "5%",
   },
 });
 

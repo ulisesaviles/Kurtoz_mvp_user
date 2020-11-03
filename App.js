@@ -9,6 +9,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 const Stack = createStackNavigator();
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import Terms from "./components/Terms";
 
 export default function App() {
   const [gotUser, setGotUser] = useState(false);
@@ -63,6 +64,14 @@ export default function App() {
             options={{
               headerTransparent: "true",
               title: "",
+            }}
+          />
+          <Stack.Screen
+            name="Terms"
+            component={Terms}
+            options={{
+              // headerTransparent: "true",
+              title: "Términos y condiciones",
             }}
           />
           <Stack.Screen
