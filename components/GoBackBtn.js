@@ -21,8 +21,8 @@ function GoBackBtn() {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 40,
-    marginHorizontal: 10,
+    marginVertical: "10%",
+    marginHorizontal: "5%",
     backgroundColor: "rgba(255,255,255,0.5)",
     height: 30,
     borderRadius: 10,

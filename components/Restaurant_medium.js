@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Rating from "./Rating";
 import firebase from "../database/database";
@@ -13,6 +20,7 @@ function Restaurant_medium(props) {
   const [img, setImg] = useState(
     "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
   );
+  const [open, setOpen] = useState(false);
 
   function capitalize(word) {
     arr = word.split(" ");
@@ -42,6 +50,7 @@ function Restaurant_medium(props) {
         .doc(restaurantId)
         .get()
         .then((restaurant) => {
+          setOpen(restaurant.data().open);
           setImg(restaurant.data().img);
           setName(capitalize(restaurant.data().name));
           setCategory(restaurant.data().category);
@@ -57,31 +66,65 @@ function Restaurant_medium(props) {
         });
     }
   }
-
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate("Restaurant_compo", { id: props.restaurantId });
-      }}
-    >
-      <View style={styles.container}>
-        <Image
-          source={{
-            uri: img,
-          }}
-          style={styles.photo}
-        />
-        <View style={styles.descriptionContainer}>
-          <View style={styles.horizontalAtributesContainer}>
-            <Text style={styles.restaurantName}>{name}</Text>
-            <Rating rating={rating} />
+  console.log(open);
+  if (open == true) {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Restaurant_compo", { id: props.restaurantId });
+        }}
+      >
+        <View style={styles.container}>
+          <Image
+            source={{
+              uri: img,
+            }}
+            style={styles.photo}
+          />
+          <View style={styles.descriptionContainer}>
+            <View style={styles.horizontalAtributesContainer}>
+              <Text style={styles.restaurantName}>{name}</Text>
+              <Rating rating={rating} />
+            </View>
+            <Text style={styles.restaurantCategory}>{category}</Text>
+            <Text style={styles.prepTime}>{delivery}</Text>
           </View>
-          <Text style={styles.restaurantCategory}>{category}</Text>
-          <Text style={styles.prepTime}>{delivery}</Text>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  } else {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Restaurant_compo", { id: props.restaurantId });
+        }}
+      >
+        <View style={styles.container}>
+          <View style={styles.photoContainer}>
+            <ImageBackground
+              source={{
+                uri: img,
+              }}
+              style={styles.photoBackground}
+              resizeMode="cover"
+            >
+              <View style={styles.closeContainer}>
+                <Text style={styles.close}>CERRADO</Text>
+              </View>
+            </ImageBackground>
+          </View>
+          <View style={styles.descriptionContainer}>
+            <View style={styles.horizontalAtributesContainer}>
+              <Text style={styles.restaurantName}>{name}</Text>
+              <Rating rating={rating} />
+            </View>
+            <Text style={styles.restaurantCategory}>{category}</Text>
+            <Text style={styles.prepTime}>{delivery}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -95,6 +138,16 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   photo: {
+    width: "94%",
+    margin: "3%",
+    height: "64%",
+  },
+  photoBackground: {
+    width: "100%",
+    margin: "0%",
+    height: "100%",
+  },
+  photoContainer: {
     width: "94%",
     margin: "3%",
     height: "64%",
@@ -120,6 +173,18 @@ const styles = StyleSheet.create({
   prepTime: {
     fontSize: 14,
     fontWeight: "300",
+  },
+  closeContainer: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  close: {
+    fontSize: 40,
+    fontWeight: "600",
+    color: "rgb(255,255,255)",
   },
 });
 

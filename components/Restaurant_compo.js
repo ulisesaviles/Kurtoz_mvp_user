@@ -17,6 +17,7 @@ import firebase from "../database/database";
 import GoBackBtn from "./GoBackBtn";
 
 const Restaurant_compo = ({ navigation, route }) => {
+  const [open, setOpen] = useState(true);
   // Restaurant Details:
   const [updater, update] = useState(" .");
   const [restaurantName, setRestaurantName] = useState(" - - -");
@@ -60,6 +61,7 @@ const Restaurant_compo = ({ navigation, route }) => {
         .doc(restaurantId)
         .get()
         .then((restaurant) => {
+          setOpen(restaurant.data().open);
           setRestaurantName(restaurant.data().name);
           setRestaurantCategory(restaurant.data().category);
           setRestaurantRating(restaurant.data().rating);
@@ -135,7 +137,31 @@ const Restaurant_compo = ({ navigation, route }) => {
                 }}
                 style={styles.backgroundImage}
               >
-                <GoBackBtn />
+                <View
+                  style={{
+                    backgroundColor:
+                      open == true ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.6)",
+                    height: "100%",
+                  }}
+                >
+                  <View style={styles.container33}>
+                    <GoBackBtn />
+                  </View>
+                  <View style={styles.container33Close}>
+                    <Text
+                      style={{
+                        fontSize: 50,
+                        fontWeight: "600",
+                        color:
+                          open == true
+                            ? "rgba(255,255,255,0)"
+                            : "rgba(255,255,255,1)",
+                      }}
+                    >
+                      CERRADO
+                    </Text>
+                  </View>
+                </View>
               </ImageBackground>
             </View>
             <View style={styles.descriptionContainer}>
@@ -184,7 +210,31 @@ const Restaurant_compo = ({ navigation, route }) => {
               }}
               style={styles.backgroundImage}
             >
-              <GoBackBtn />
+              <View
+                style={{
+                  backgroundColor:
+                    open == true ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.6)",
+                  height: "100%",
+                }}
+              >
+                <View style={styles.container33}>
+                  <GoBackBtn />
+                </View>
+                <View style={styles.container33Close}>
+                  <Text
+                    style={{
+                      fontSize: 50,
+                      fontWeight: "600",
+                      color:
+                        open == true
+                          ? "rgba(255,255,255,0)"
+                          : "rgba(255,255,255,1)",
+                    }}
+                  >
+                    CERRADO
+                  </Text>
+                </View>
+              </View>
             </ImageBackground>
           </View>
           <View style={styles.descriptionContainer}>
@@ -274,6 +324,14 @@ const styles = StyleSheet.create({
   menu: {
     fontSize: 30,
     fontWeight: "300",
+  },
+  container33: {
+    height: "33%",
+  },
+  container33Close: {
+    height: "33%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
