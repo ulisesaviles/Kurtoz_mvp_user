@@ -15,7 +15,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-community/async-storage";
 
 const Cart_compo = ({ navigation, route }) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [total, setTotal] = useState(0);
   const [restaurantName, setRestaurantName] = useState(" - - - ");
   const [restaurantImg, setRestaurantImg] = useState("");
@@ -74,6 +74,7 @@ const Cart_compo = ({ navigation, route }) => {
       .doc(restaurantId_)
       .get()
       .then((restaurant) => {
+        setOpen(restaurant.data().open);
         setRestaurantName(restaurant.data().name);
         setRestaurantImg(restaurant.data().img);
       })
@@ -89,84 +90,85 @@ const Cart_compo = ({ navigation, route }) => {
       .get()
       .then((restaurant) => {
         setOpen(restaurant.data().open);
-      });
-    if (open == true) {
-      let today = new Date();
-      today = today.getTime();
-      let userOrder = {
-        date: today,
-        products: cart,
-        restaurantId: restaurantId,
-        restaurantName: restaurantName,
-        restaurantImg: restaurantImg,
-        type: "active",
-        total: total,
-      };
-      let restaurantCart = [];
-      let product;
-      for (let i = 0; i < cart.length; i++) {
-        product = cart[i];
-        // console.log(product);
-        let modifiers = [];
-        for (let j = 0; j < product.modifires.length; j++) {
-          modifiers.push({
-            id: product.modifires[j].id,
-            quantity: 1,
+        let open_ = restaurant.data().open;
+        if (open_ == true) {
+          let today = new Date();
+          today = today.getTime();
+          let userOrder = {
+            date: today,
+            products: cart,
+            restaurantId: restaurantId,
+            restaurantName: restaurantName,
+            restaurantImg: restaurantImg,
+            type: "active",
+            total: total,
+          };
+          let restaurantCart = [];
+          let product;
+          for (let i = 0; i < cart.length; i++) {
+            product = cart[i];
+            // console.log(product);
+            let modifiers = [];
+            for (let j = 0; j < product.modifires.length; j++) {
+              modifiers.push({
+                id: product.modifires[j].id,
+                quantity: 1,
+              });
+            }
+            let restaurantProduct = {
+              quantity: product.cuantity,
+              id: product.productId,
+              variant: product.variantIndex,
+              modifiers: modifiers,
+            };
+            restaurantCart.push(restaurantProduct);
+          }
+          let restaurantOrder = {
+            type: "active",
+            total: total,
+            user: {
+              name: userData_.name,
+              id: userData_.id,
+            },
+            createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+            products: restaurantCart,
+          };
+
+          // await firebase
+          //   .firestore()
+          //   .collection("restaurants")
+          //   .doc(restaurantId)
+          //   .collection("orders")
+          //   .add(restaurantOrder);
+
+          // await firebase
+          //   .firestore()
+          //   .collection("users")
+          //   .doc(userData_.id)
+          //   .collection("orders")
+          //   .add(userOrder);
+
+          navigation.navigate("Pay", {
+            restaurantOrder: restaurantOrder,
+            userOrder: userOrder,
           });
+
+          // setRestaurantId(" -");
+          // updateCart([]);
+        } else {
+          Alert.alert(
+            `${restaurantName} se encuentra cerrado`,
+            "Inténtalo más tarde",
+            [
+              {
+                text: "OK",
+                onPress: () => console.log("OK Pressed"),
+              },
+            ],
+            { cancelable: false }
+          );
         }
-        let restaurantProduct = {
-          quantity: product.cuantity,
-          id: product.productId,
-          variant: product.variantIndex,
-          modifiers: modifiers,
-        };
-        restaurantCart.push(restaurantProduct);
-      }
-      let restaurantOrder = {
-        type: "active",
-        total: total,
-        user: {
-          name: userData_.name,
-          id: userData_.id,
-        },
-        createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-        products: restaurantCart,
-      };
-
-      // await firebase
-      //   .firestore()
-      //   .collection("restaurants")
-      //   .doc(restaurantId)
-      //   .collection("orders")
-      //   .add(restaurantOrder);
-
-      // await firebase
-      //   .firestore()
-      //   .collection("users")
-      //   .doc(userData_.id)
-      //   .collection("orders")
-      //   .add(userOrder);
-
-      navigation.navigate("Pay", {
-        restaurantOrder: restaurantOrder,
-        userOrder: userOrder,
       });
-
-      // setRestaurantId(" -");
-      // updateCart([]);
-    } else {
-      Alert.alert(
-        `${restaurantName} se encuentra cerrado`,
-        "Inténtalo más tarde",
-        [
-          {
-            text: "OK",
-            onPress: () => console.log("OK Pressed"),
-          },
-        ],
-        { cancelable: false }
-      );
-    }
   }
   async function updateCart(cart_) {
     await firebase
