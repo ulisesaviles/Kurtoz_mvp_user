@@ -1,3 +1,4 @@
+import { NavigationContainer } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -7,8 +8,12 @@ import {
   SafeAreaView,
 } from "react-native";
 import TarjetaMini from "./TarjetaMini";
+import { useNavigation } from "@react-navigation/native";
+import firebase from "../database/database";
 
 const Ordenes_compo = () => {
+  async function getPayments() {}
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.SafeAreaView_}>
       <View style={styles.header}>
@@ -20,7 +25,11 @@ const Ordenes_compo = () => {
           <TarjetaMini />
           <TarjetaMini />
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Stripe");
+          }}
+        >
           <View style={styles.addPaymentContainer}>
             <Text style={styles.addPayment}>Add Payment Method</Text>
           </View>

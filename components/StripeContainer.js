@@ -13,16 +13,16 @@ import {
 import firebase from "../database/database";
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
+import GoBackBtn from "./GoBackBtn";
+import { SimpleLineIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const StripeContainer = (props) => {
   const [loading, setLoading] = useState(false);
-  console.log(props.userId);
-  console.log(props.total);
-  console.log(props.restaurantOrder);
-  console.log(props.userOrder);
   let userData;
   const [userData_, setUserData_] = useState("");
   const [gotUser, setGotUser] = useState(false);
+  const [successfullyAdded, setSuccessfullyAdded] = useState(false);
   const loadingImg =
     "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif";
 
@@ -35,6 +35,7 @@ const StripeContainer = (props) => {
         if (value !== null) {
           userData = value;
           setUserData_(userData);
+          console.log(userData);
         }
       } catch (e) {
         console.log(e);
@@ -43,50 +44,70 @@ const StripeContainer = (props) => {
   }
   getUser();
 
-  async function pay(message) {
-    let card = JSON.parse(message.nativeEvent.data);
+  async function savePaymentMethod(message) {
+    let token = JSON.parse(message.nativeEvent.data);
+    console.log(token);
     setLoading(true);
-    console.log(card);
     await axios({
       method: "post",
-      url: "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/pay",
+      url:
+        "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createPaymentMetod",
       data: {
-        userId: props.userId,
-        paymentMethod: card,
-        ammountToPay: props.total * 100,
+        userId: userData_.id,
+        token: token,
       },
     }).then(async (response) => {
+      console.log(response);
+      setLoading(false);
+      setSuccessfullyAdded(true);
       if (response.status == 200) {
         await firebase
           .firestore()
           .collection("users")
-          .doc(props.userId)
+          .doc(userData_.id)
           .update({ paymentInProcess: false });
-        await firebase
-          .firestore()
-          .collection("restaurants")
-          .doc(props.userOrder.restaurantId)
-          .collection("orders")
-          .add(props.restaurantOrder);
-        await firebase
-          .firestore()
-          .collection("users")
-          .doc(props.userId)
-          .collection("orders")
-          .add(props.userOrder);
-        await firebase
-          .firestore()
-          .collection("users")
-          .doc(props.userId)
-          .update({ cart: { restaurantId: "", items: [] } });
+        // await firebase
+        //   .firestore()
+        //   .collection("restaurants")
+        //   .doc(props.userOrder.restaurantId)
+        //   .collection("orders")
+        //   .add(props.restaurantOrder);
+        // await firebase
+        //   .firestore()
+        //   .collection("users")
+        //   .doc(props.userId)
+        //   .collection("orders")
+        //   .add(props.userOrder);
+        // await firebase
+        //   .firestore()
+        //   .collection("users")
+        //   .doc(props.userId)
+        //   .update({ cart: { restaurantId: "", items: [] } });
       }
     });
   }
-  if (loading == false) {
+  if (!loading && !successfullyAdded) {
     return (
-      <WebView
-        source={{
-          html: `<head>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <View style={styles.goBackContainer}>
+            <GoBackBtn style={styles.goBack} />
+          </View>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.header}>Agregar tarjeta</Text>
+          </View>
+        </View>
+        <View style={styles.titleContainer}>
+          <SimpleLineIcons
+            name="credit-card"
+            size={150}
+            color="black"
+            style={styles.cardIcon}
+          />
+        </View>
+        <WebView
+          source={{
+            html: `<head>
           <meta charset="utf-8" />
           <title>Stripe Card Payments</title>
           <meta name="description" content="Payments handler" />
@@ -204,7 +225,7 @@ const StripeContainer = (props) => {
               <div id="card-errors" role="alert" class="errors"></div>
             </div>
           
-            <button class="submit-btn">Realizar pago</button>
+            <button class="submit-btn">Guardar método de pago</button>
             <div class="extra-info-container">
               <div class="powered-by-container">
                 <h3>Proveído por </h3>
@@ -212,14 +233,17 @@ const StripeContainer = (props) => {
               </div>
             </div>
             <h6 id="obj"></h6>
-              <!-- <script src="script.js"></script> -->
+            <!-- <script src="script.js"></script> -->
+            <script src="https://js.stripe.com/v3/"></script>
               <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
               <script>
+                
                 var stripe = Stripe(
                   "pk_test_51HYM73FJbeEVXG7GYXRhTfmJ7c4u92BMFAslCd4DydDRqJYCPETbLJO5dwz1nAK3rXSrPaJKKoRldB32fAtyQtsr00UmzwIdiT"
                 );
                 // Create an instance of Elements.
                 var elements = stripe.elements();
+      
                 // Custom styling can be passed to options when creating an Element.
                 // (Note that this demo uses a wider set of styles than the guide below.)
                 var style = {
@@ -241,7 +265,7 @@ const StripeContainer = (props) => {
                 // Create an instance of the card Element.
                 var card = elements.create("card", { style: style });
       
-                // Add an instance of the card Element into the "card-element" <div>.
+                // Add an instance of the card Element into the 'card-element' <div>.
                 card.mount("#card-element");
       
                 // Handle real-time validation errors from the card Element.
@@ -253,23 +277,27 @@ const StripeContainer = (props) => {
                     displayError.textContent = "";
                   }
                 });
-      
+                
                 // Handle form submission.
                 var form = document.getElementById("payment-form");
-                form.addEventListener("submit", function (event) {
+                form.addEventListener("submit", async function (event) {
                   event.preventDefault();
+                  
                   // location.reload()
-                  stripe.createToken(card).then(async function (result) {
-                    if (result.error) {
-                      // Inform the user if there was an error.
-                      var errorElement = document.getElementById("card-errors");
-                      errorElement.textContent = result.error.message;
-                      window.ReactNativeWebView.postMessage("Hello From Fetch!");
-                    } else {
-                      // Handle post in react native
-                      window.ReactNativeWebView.postMessage(JSON.stringify(result.token));
-                    }
-                  });
+                  // console.log(token);
+                  const token = await stripe.createToken(card);
+                  window.ReactNativeWebView.postMessage(JSON.stringify(token));
+                  // axios({
+                  //   url: "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createPaymentMetod",
+                  //   method: "POST",
+                  //   data: {
+                  //     userId: "M97HqZEoJWtJygYQGXNL",
+                  //     token: token,
+                  //   }
+                  // }).then((Response) => {
+                  //   console.log(Response);
+                  // });
+                  
                 });
       
                 // Submit the form with the token ID.
@@ -287,24 +315,69 @@ const StripeContainer = (props) => {
                 
               </script>
         </body>`,
-        }}
-        // source={require("../StripeContainer/index.html")}
-        originWhitelist={["*"]}
-        allowingReadAccessToURL={true}
-        scrollEnabled={false}
-        startInLoadingState
-        onMessage={pay}
-      />
-    );
-  } else {
-    return (
-      <View style={styles.loadingContainer}>
-        <Image
-          source={{
-            uri: loadingImg,
           }}
-          style={styles.loadingImage}
+          //window.ReactNativeWebView.postMessage(JSON.stringify(result.token));
+          // source={require("../StripeContainer/index.html")}
+          originWhitelist={["*"]}
+          allowingReadAccessToURL={true}
+          scrollEnabled={false}
+          startInLoadingState
+          onMessage={savePaymentMethod}
         />
+      </View>
+    );
+  } else if (loading && !successfullyAdded) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <View style={styles.goBackContainer}>
+            <GoBackBtn style={styles.goBack} />
+          </View>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.header}>Agregar tarjeta</Text>
+          </View>
+        </View>
+        <View style={styles.titleContainer}>
+          <SimpleLineIcons
+            name="credit-card"
+            size={150}
+            color="black"
+            style={styles.cardIcon}
+          />
+        </View>
+        <View style={styles.loadingContainer}>
+          <Image
+            source={{
+              uri: loadingImg,
+            }}
+            style={styles.loadingImage}
+          />
+        </View>
+      </View>
+    );
+  } else if (!loading && successfullyAdded) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <View style={styles.goBackContainer}>
+            <GoBackBtn style={styles.goBack} />
+          </View>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.header}>Agregar tarjeta</Text>
+          </View>
+        </View>
+        <View style={styles.titleContainer}>
+          <SimpleLineIcons
+            name="credit-card"
+            size={150}
+            color="black"
+            style={styles.cardIcon}
+          />
+        </View>
+        <View style={styles.successContainer}>
+          <Text style={styles.transaccion}>Listo</Text>
+          <MaterialIcons name="check-circle" size={24} color="rgb(0,200,0)" />
+        </View>
       </View>
     );
   }
@@ -320,6 +393,46 @@ const styles = StyleSheet.create({
   loadingImage: {
     width: 200,
     height: 200,
+  },
+  transaccion: {
+    fontSize: 20,
+    fontWeight: "500",
+    marginRight: "3%",
+  },
+  container: {
+    backgroundColor: "rgb(255,255,255)",
+    width: "100%",
+    height: "100%",
+  },
+  titleContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: "25%",
+    marginVertical: "5%",
+  },
+  cardIcon: {},
+  headerContainer: {
+    flexDirection: "row",
+    height: "13%",
+    // backgroundColor: "red",
+    borderBottomColor: "rgb(100,100,100)",
+  },
+  goBackContainer: {
+    height: "100%",
+    // backgroundColor: "blue",
+    paddingTop: "11%",
+    paddingLeft: "5%",
+    width: "20%",
+  },
+  headerTitleContainer: {
+    width: "60%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    marginTop: "15%",
+    fontSize: 25,
+    fontWeight: "600",
   },
 });
 

@@ -51,12 +51,69 @@ exports.createStripeUser = functions.https.onRequest(
 );
 
 exports.pay = functions.https.onRequest(async (request, response) => {
-  // Need: ammountToPay, userId, paymentMethod
-  return cors(request, response, async () => {
+  // Need: ammountToPay, userId, paymentIndex
+  // return cors(request, response, async () => {
+  try {
+    console.log(request.body);
+    let customer;
+    let paymentId;
+    await admin
+      .firestore()
+      .collection("users")
+      .doc(request.body.userId)
+      .get()
+      .then((user) => {
+        customer = user.data().customerId;
+        paymentId = user.data().paymentMethods.data[request.body.paymentIndex]
+          .id;
+      });
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: request.body.ammountToPay,
+      currency: "mxn",
+      payment_method: paymentId,
+      off_session: false,
+      confirm: true,
+      customer: customer,
+    });
+    console.log(paymentIntent);
+    if (paymentIntent.status == "succeeded") {
+      return response.status(200).json({
+        status: "success",
+        userId: request.body.userId,
+      });
+    } else if (paymentIntent.status == "requires_confirmation") {
+      const paymentIntent_ = await stripe.paymentIntents.confirm(
+        paymentIntent,
+        { payment_method: paymentId }
+      );
+      if (paymentIntent_.status == "succeeded") {
+        return response.status(200).json({
+          status: "success",
+          userId: request.body.userId,
+        });
+      }
+    } else {
+      return response.status(400).json({
+        status: "Declined",
+        userId: request.body.userId,
+      });
+    }
+  } catch (error) {
+    return response.status(500).json({ msg: `Server error: ${error}` });
+  }
+  // });
+});
+
+exports.createPaymentMetod = functions.https.onRequest(
+  // Need: userId, card
+  async (request, response) => {
+    // return cors(request, response, async () => {
+    let customer;
     try {
+      const stripe = require("stripe")(
+        "sk_test_51HYM73FJbeEVXG7GsYDdGV5dTaq05MLdbi88gozHr5DucqfkQ4MHvcK0fBe2sndlkTEwi6Ar7Iw7KdICAwPYc68000Hp8jooPl"
+      );
       console.log(request.body);
-      let card = request.body.paymentMethod;
-      let customer;
       await admin
         .firestore()
         .collection("users")
@@ -64,40 +121,34 @@ exports.pay = functions.https.onRequest(async (request, response) => {
         .get()
         .then((user) => {
           customer = user.data().customerId;
-          console.log(card);
         });
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: request.body.ammountToPay,
-        currency: "mxn",
-        payment_method_data: {
-          type: "card",
-          card: {
-            token: card.id,
-          },
+      const paymentMethod = await stripe.paymentMethods.create({
+        type: "card",
+        card: {
+          token: request.body.token.token.id,
         },
-        off_session: false,
-        confirm: true,
-        customer: customer,
       });
-      console.log(paymentIntent);
-      const clientSecret = paymentIntent.client_secret;
-      console.log(clientSecret);
-      // await stripe.confirmCardPayment(clientSecret, {
-      //   // payment_method: {
-      //   //   card: card.id,
-      //   //   billing_details: {
-      //   //     name: "Ulises Aviles",
-      //   //   },
-      //   // },
-      // });
+      const paymentMethod_ = await stripe.paymentMethods.attach(
+        paymentMethod.id,
+        { customer: customer }
+      );
+      const paymentMethods = await stripe.paymentMethods.list({
+        customer: customer,
+        type: "card",
+      });
+      console.log(paymentMethods);
+      await admin
+        .firestore()
+        .collection("users")
+        .doc(request.body.userId)
+        .update({ paymentMethods: paymentMethods });
       return response.status(200).json({
         status: "success",
         userId: request.body.userId,
-        card: "**** **** **** " + card.card.last4,
-        paymentMethod: request.body.paymentMethod,
       });
     } catch (error) {
       return response.status(500).json({ msg: `Server error: ${error}` });
     }
-  });
-});
+    // });
+  }
+);

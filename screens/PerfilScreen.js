@@ -10,6 +10,7 @@ import Help from "../components/Help";
 import About from "../components/About";
 import Ordenes_compo from "../components/Ordenes_compo";
 import Food_compo from "../components/Food_compo";
+import StripeContainer from "../components/StripeContainer";
 
 const Stack = createStackNavigator();
 
@@ -42,6 +43,11 @@ const PerfilScreen = () => {
         <Stack.Screen
           name="Food_compo"
           component={Food_compo}
+          options={{ headerTransparent: "true", title: "" }}
+        />
+        <Stack.Screen
+          name="Stripe"
+          component={StripeContainer}
           options={{ headerTransparent: "true", title: "" }}
         />
       </Stack.Navigator>

@@ -126,7 +126,8 @@
         </div>
       </div>
       <h6 id="obj"></h6>
-        <!-- <script src="script.js"></script> -->
+      <!-- <script src="script.js"></script> -->
+      <script src="https://js.stripe.com/v3/"></script>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script>
           
@@ -169,37 +170,26 @@
               displayError.textContent = "";
             }
           });
-
+          
           // Handle form submission.
           var form = document.getElementById("payment-form");
-          form.addEventListener("submit", function (event) {
+          form.addEventListener("submit", async function (event) {
             event.preventDefault();
-            // location.reload()
             
-            stripe.createToken(card).then(async function (result) {
-              if (result.error) {
-                // Inform the user if there was an error.
-                var errorElement = document.getElementById("card-errors");
-                Document.getElementById
-                errorElement.textContent = result.error.message;
-              } else {
-                // Send the token to your server.
-                console.log(result.token);
-                await axios({
-                  method: "post",
-                  url: "http://localhost:5001/food-delivery-app-86ccd/us-central1/pay",
-                  data: {                   
-                    userId : "CydewFVojffkrVbBuQQF",
-                    paymentMethod : result.token,
-                    ammountToPay : 1999
-                  },
-                }).then((Response) => {
-                  console.log(Response);
-                  location.reload()
-                  // successHandler();
-                });
+            // location.reload()
+            const token = await stripe.createToken(card);
+            console.log(token);
+            axios({
+              url: "http://localhost:5001/food-delivery-app-86ccd/us-central1/createPaymentMetod",
+              method: "POST",
+              data: {
+                userId: "M97HqZEoJWtJygYQGXNL",
+                token: token,
               }
+            }).then((Response) => {
+              console.log(Response);
             });
+            
           });
 
           // Submit the form with the token ID.
