@@ -31,52 +31,84 @@ const SignUp = ({ navigation }) => {
   const [check, setCheck] = useState(-1);
 
   async function handlePress() {
-    if (check == -1) {
-      setError(
-        "Debes de aceptar los términos y condiciones para crear una cuenta"
-      );
-    } else {
-      let user = {
-        name: name,
-        email: email,
-        password: password,
-        cart: {
-          items: [],
-          restaurantId: "",
-        },
-        paymentMethods: {
-          data: [],
-        },
-      };
-      await firebase.firestore().collection("users").add(user);
-      await firebase
-        .firestore()
-        .collection("users")
-        .get()
-        .then((users) => {
-          users.forEach(async (user) => {
-            if (user.data().email == email && user.data().name == name) {
-              storeData(
-                JSON.stringify({
-                  email: email,
-                  name: user.data().name,
-                  id: user.id,
-                })
-              );
-              await axios({
-                method: "post",
-                url:
-                  "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createStripeUser",
-                data: {
-                  id: user.id,
-                },
-              }).then((response) => {
-                console.log(response);
-              });
-            }
+    if (
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+        email
+      )
+    ) {
+      if (name.length < 6) {
+        setError("Su nombre debe contener al menos 6 caracteres");
+      } else if (name.length > 20) {
+        setError("Su nombre debe contener menos de 20 caracteres");
+      } else if (password.length < 5) {
+        setError("La contraseña debe contener al menos 5 caracteres");
+      } else if (check == -1) {
+        setError(
+          "Debes de aceptar los términos y condiciones para crear una cuenta"
+        );
+      } else {
+        let validEmail = true;
+        await firebase
+          .firestore()
+          .collection("users")
+          .get()
+          .then((users) => {
+            users.forEach((user) => {
+              if (user.data().email == email) {
+                setError(
+                  "El correo ingresado ya está asociado a una cuenta existente."
+                );
+                validEmail = false;
+              }
+            });
           });
-        });
-      navigation.navigate("Root");
+        if (validEmail) {
+          let user = {
+            name: name,
+            email: email,
+            password: password,
+            cart: {
+              items: [],
+              restaurantId: "",
+            },
+            paymentMethods: {
+              data: [],
+            },
+          };
+          await firebase.firestore().collection("users").add(user);
+          await firebase
+            .firestore()
+            .collection("users")
+            .get()
+            .then((users) => {
+              users.forEach(async (user) => {
+                if (user.data().email == email && user.data().name == name) {
+                  storeData(
+                    JSON.stringify({
+                      email: email,
+                      name: user.data().name,
+                      id: user.id,
+                    })
+                  );
+                  await axios({
+                    method: "post",
+                    url:
+                      "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createStripeUser",
+                    data: {
+                      id: user.id,
+                    },
+                  }).then((response) => {
+                    console.log(response);
+                  });
+                }
+              });
+            });
+          navigation.navigate("Root");
+        }
+      }
+    } else {
+      console.log(email);
+      setError("Ingresa una dirección de correo válida");
     }
   }
 
