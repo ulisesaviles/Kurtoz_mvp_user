@@ -6,72 +6,132 @@ import {
   View,
   TouchableOpacity,
   SafeAreaView,
+  ScrollView,
 } from "react-native";
 import TarjetaMini from "./TarjetaMini";
 import { useNavigation } from "@react-navigation/native";
 import firebase from "../database/database";
+import GoBackBtn from "./GoBackBtn";
+import AsyncStorage from "@react-native-community/async-storage";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const Ordenes_compo = () => {
-  async function getPayments() {}
+  let userData;
+  const [userData_, setUserData_] = useState("");
+  const [gotUser, setGotUser] = useState(false);
+  const [successfullyAdded, setSuccessfullyAdded] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+
+  async function getUser() {
+    if (!gotUser) {
+      setGotUser(true);
+      try {
+        let value = await AsyncStorage.getItem("userData");
+        value = JSON.parse(value);
+        if (value !== null) {
+          userData = value;
+          setUserData_(userData);
+          getPayments(userData.id);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+  getUser();
+
+  async function getPayments(userId) {
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(userId)
+      .onSnapshot((user) => {
+        setPaymentMethods(user.data().paymentMethods.data);
+        console.log(user.data().paymentMethods.data);
+      });
+  }
   const navigation = useNavigation();
   return (
-    <SafeAreaView style={styles.SafeAreaView_}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Métodos de pago</Text>
+    <View>
+      <View style={styles.headerContainer}>
+        <View style={styles.goBackContainer}>
+          <GoBackBtn style={styles.goBack} />
+        </View>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.header}>Agregar tarjeta</Text>
+        </View>
       </View>
       <View style={styles.container}>
-        <View style={styles.tasjetasContainer}>
-          <TarjetaMini />
-          <TarjetaMini />
-          <TarjetaMini />
-        </View>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Stripe");
-          }}
-        >
-          <View style={styles.addPaymentContainer}>
-            <Text style={styles.addPayment}>Add Payment Method</Text>
+        <ScrollView>
+          <View style={styles.tasjetasContainer}>
+            {paymentMethods.map((paymentMethod) => (
+              <TarjetaMini
+                brand={paymentMethod.card.brand}
+                last4={paymentMethod.card.last4}
+              />
+            ))}
           </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Stripe");
+            }}
+          >
+            <View style={styles.addPaymentContainer}>
+              <MaterialIcons name="add" size={24} color="black" />
+              <Text style={styles.addPayment}>Agregar método de pago</Text>
+            </View>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  SafeAreaView_: {
-    marginTop: Platform.OS === "ios" ? 0 : 22,
-    backgroundColor: "rgb(255,255,255)",
-    height: "100%",
-  },
   container: {
-    height: "100%",
+    height: "88%",
     backgroundColor: "rgb(240,240,240)",
   },
-  header: {
+  headerContainer: {
+    flexDirection: "row",
+    height: "12%",
+    borderBottomColor: "rgb(100,100,100)",
     backgroundColor: "rgb(255,255,255)",
-    height: "7%",
+    marginBottom: 1,
+  },
+  goBackContainer: {
+    height: "100%",
+    paddingTop: "12%",
+    paddingLeft: "5%",
+    width: "20%",
+  },
+  headerTitleContainer: {
+    width: "60%",
+    alignItems: "center",
     justifyContent: "center",
   },
-  title: {
-    marginLeft: "20%",
-    fontSize: 35,
-    fontWeight: "400",
+  header: {
+    marginTop: "15%",
+    fontSize: 25,
+    fontWeight: "600",
   },
   tasjetasContainer: {
     backgroundColor: "rgb(255, 255, 255)",
-    marginTop: "10%",
+    marginTop: "5%",
   },
   addPaymentContainer: {
     backgroundColor: "rgb(255, 255, 255)",
     width: "100%",
-    paddingVertical: 10,
+    paddingVertical: 15,
     paddingHorizontal: 20,
+    marginBottom: "15%",
+    flexDirection: "row",
+    alignItems: "center",
   },
   addPayment: {
     fontSize: 18,
-    fontWeight: "300",
+    fontWeight: "400",
+    marginLeft: "3%",
   },
 });
 

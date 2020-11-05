@@ -1,30 +1,25 @@
 import React, { useState } from "react";
 import { WebView } from "react-native-webview";
 import "react-native-gesture-handler";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  SafeAreaView,
-  ScrollView,
-  Image,
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import firebase from "../database/database";
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
 import GoBackBtn from "./GoBackBtn";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const StripeContainer = (props) => {
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+  const loadingImg =
+    "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif";
   let userData;
   const [userData_, setUserData_] = useState("");
   const [gotUser, setGotUser] = useState(false);
   const [successfullyAdded, setSuccessfullyAdded] = useState(false);
-  const loadingImg =
-    "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif";
+  const [error, setError] = useState(false);
 
   async function getUser() {
     if (!gotUser) {
@@ -48,43 +43,71 @@ const StripeContainer = (props) => {
     let token = JSON.parse(message.nativeEvent.data);
     console.log(token);
     setLoading(true);
-    await axios({
-      method: "post",
-      url:
-        "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createPaymentMetod",
-      data: {
-        userId: userData_.id,
-        token: token,
-      },
-    }).then(async (response) => {
-      console.log(response);
+    try {
+      await axios({
+        method: "post",
+        url:
+          "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createPaymentMetod",
+        data: {
+          userId: userData_.id,
+          token: token,
+        },
+      }).then(async (response) => {
+        console.log(response);
+        setLoading(false);
+        if (response.status == 200) {
+          setSuccessfullyAdded(true);
+          await firebase
+            .firestore()
+            .collection("users")
+            .doc(userData_.id)
+            .update({ paymentInProcess: false });
+        } else {
+          setError(true);
+        }
+      });
+    } catch (error) {
       setLoading(false);
-      setSuccessfullyAdded(true);
-      if (response.status == 200) {
-        await firebase
-          .firestore()
-          .collection("users")
-          .doc(userData_.id)
-          .update({ paymentInProcess: false });
-        // await firebase
-        //   .firestore()
-        //   .collection("restaurants")
-        //   .doc(props.userOrder.restaurantId)
-        //   .collection("orders")
-        //   .add(props.restaurantOrder);
-        // await firebase
-        //   .firestore()
-        //   .collection("users")
-        //   .doc(props.userId)
-        //   .collection("orders")
-        //   .add(props.userOrder);
-        // await firebase
-        //   .firestore()
-        //   .collection("users")
-        //   .doc(props.userId)
-        //   .update({ cart: { restaurantId: "", items: [] } });
-      }
-    });
+      setError(true);
+      console.log(error);
+    }
+  }
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <View style={styles.goBackContainer}>
+            <GoBackBtn style={styles.goBack} />
+          </View>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.header}>Agregar tarjeta</Text>
+          </View>
+        </View>
+        <View style={styles.titleContainer}>
+          <SimpleLineIcons
+            name="credit-card"
+            size={150}
+            color="black"
+            style={styles.cardIcon}
+          />
+        </View>
+        <View style={styles.successContainer}>
+          <Text style={styles.error}>Error al agregar pago</Text>
+          <MaterialIcons name="cancel" size={25} color="rgb(200,0,0)" />
+        </View>
+        <View style={styles.continueContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <View style={styles.btnContainer}>
+              <Text style={styles.continue}>Continuar</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
   }
   if (!loading && !successfullyAdded) {
     return (
@@ -376,7 +399,18 @@ const StripeContainer = (props) => {
         </View>
         <View style={styles.successContainer}>
           <Text style={styles.transaccion}>Listo</Text>
-          <MaterialIcons name="check-circle" size={24} color="rgb(0,200,0)" />
+          <MaterialIcons name="check-circle" size={35} color="rgb(0,200,0)" />
+        </View>
+        <View style={styles.continueContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <View style={styles.btnContainer}>
+              <Text style={styles.continue}>Continuar</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -395,9 +429,14 @@ const styles = StyleSheet.create({
     height: 200,
   },
   transaccion: {
-    fontSize: 20,
+    fontSize: 40,
     fontWeight: "500",
-    marginRight: "3%",
+    marginRight: "2%",
+  },
+  error: {
+    fontSize: 30,
+    fontWeight: "500",
+    marginRight: "2%",
   },
   container: {
     backgroundColor: "rgb(255,255,255)",
@@ -414,12 +453,10 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     height: "13%",
-    // backgroundColor: "red",
     borderBottomColor: "rgb(100,100,100)",
   },
   goBackContainer: {
     height: "100%",
-    // backgroundColor: "blue",
     paddingTop: "11%",
     paddingLeft: "5%",
     width: "20%",
@@ -433,6 +470,30 @@ const styles = StyleSheet.create({
     marginTop: "15%",
     fontSize: 25,
     fontWeight: "600",
+  },
+  successContainer: {
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    // paddingTop: "10%",
+  },
+  continueContainer: {
+    height: "20%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "10%",
+  },
+  btnContainer: {
+    backgroundColor: "rgb(0,0,0)",
+    borderRadius: 100,
+    height: "65%",
+    paddingHorizontal: "10%",
+    justifyContent: "center",
+  },
+  continue: {
+    color: "rgb(255,255,255)",
+    fontWeight: "700",
+    fontSize: 25,
   },
 });
 

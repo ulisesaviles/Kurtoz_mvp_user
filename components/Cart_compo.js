@@ -83,92 +83,122 @@ const Cart_compo = ({ navigation, route }) => {
       });
   }
   async function completeOrder() {
+    let userHasPaymentMethods = false;
     await firebase
       .firestore()
-      .collection("restaurants")
-      .doc(restaurantId)
+      .collection("users")
+      .doc(userData_.id)
       .get()
-      .then((restaurant) => {
-        setOpen(restaurant.data().open);
-        let open_ = restaurant.data().open;
-        if (open_ == true) {
-          let today = new Date();
-          today = today.getTime();
-          let userOrder = {
-            date: today,
-            products: cart,
-            restaurantId: restaurantId,
-            restaurantName: restaurantName,
-            restaurantImg: restaurantImg,
-            type: "active",
-            total: total,
-          };
-          let restaurantCart = [];
-          let product;
-          for (let i = 0; i < cart.length; i++) {
-            product = cart[i];
-            // console.log(product);
-            let modifiers = [];
-            for (let j = 0; j < product.modifires.length; j++) {
-              modifiers.push({
-                id: product.modifires[j].id,
-                quantity: 1,
-              });
-            }
-            let restaurantProduct = {
-              quantity: product.cuantity,
-              id: product.productId,
-              variant: product.variantIndex,
-              modifiers: modifiers,
-            };
-            restaurantCart.push(restaurantProduct);
-          }
-          let restaurantOrder = {
-            type: "active",
-            total: total,
-            user: {
-              name: userData_.name,
-              id: userData_.id,
-            },
-            createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-            products: restaurantCart,
-          };
-
-          // await firebase
-          //   .firestore()
-          //   .collection("restaurants")
-          //   .doc(restaurantId)
-          //   .collection("orders")
-          //   .add(restaurantOrder);
-
-          // await firebase
-          //   .firestore()
-          //   .collection("users")
-          //   .doc(userData_.id)
-          //   .collection("orders")
-          //   .add(userOrder);
-
-          navigation.navigate("Pay", {
-            restaurantOrder: restaurantOrder,
-            userOrder: userOrder,
-          });
-
-          // setRestaurantId(" -");
-          // updateCart([]);
-        } else {
-          Alert.alert(
-            `${restaurantName} se encuentra cerrado`,
-            "Inténtalo más tarde",
-            [
-              {
-                text: "OK",
-                onPress: () => console.log("OK Pressed"),
-              },
-            ],
-            { cancelable: false }
-          );
+      .then((user) => {
+        if (user.data().paymentMethods.data.length > 0) {
+          userHasPaymentMethods = true;
         }
       });
+    if (userHasPaymentMethods) {
+      await firebase
+        .firestore()
+        .collection("restaurants")
+        .doc(restaurantId)
+        .get()
+        .then((restaurant) => {
+          setOpen(restaurant.data().open);
+          let open_ = restaurant.data().open;
+          if (open_ == true) {
+            let today = new Date();
+            today = today.getTime();
+            let userOrder = {
+              date: today,
+              products: cart,
+              restaurantId: restaurantId,
+              restaurantName: restaurantName,
+              restaurantImg: restaurantImg,
+              type: "active",
+              total: total,
+            };
+            let restaurantCart = [];
+            let product;
+            for (let i = 0; i < cart.length; i++) {
+              product = cart[i];
+              // console.log(product);
+              let modifiers = [];
+              for (let j = 0; j < product.modifires.length; j++) {
+                modifiers.push({
+                  id: product.modifires[j].id,
+                  quantity: 1,
+                });
+              }
+              let restaurantProduct = {
+                quantity: product.cuantity,
+                id: product.productId,
+                variant: product.variantIndex,
+                modifiers: modifiers,
+              };
+              restaurantCart.push(restaurantProduct);
+            }
+            let restaurantOrder = {
+              type: "active",
+              total: total,
+              user: {
+                name: userData_.name,
+                id: userData_.id,
+              },
+              createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+              products: restaurantCart,
+            };
+
+            // await firebase
+            //   .firestore()
+            //   .collection("restaurants")
+            //   .doc(restaurantId)
+            //   .collection("orders")
+            //   .add(restaurantOrder);
+
+            // await firebase
+            //   .firestore()
+            //   .collection("users")
+            //   .doc(userData_.id)
+            //   .collection("orders")
+            //   .add(userOrder);
+
+            navigation.navigate("Pay", {
+              restaurantOrder: restaurantOrder,
+              userOrder: userOrder,
+            });
+
+            // setRestaurantId(" -");
+            // updateCart([]);
+          } else {
+            Alert.alert(
+              `${restaurantName} se encuentra cerrado`,
+              "Inténtalo más tarde",
+              [
+                {
+                  text: "OK",
+                  onPress: () => console.log("OK Pressed"),
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+        });
+    } else {
+      Alert.alert(
+        "Debes ingresar un método de pago antes de completar la órden",
+        "",
+        [
+          {
+            text: "Agregar ahora",
+            onPress: () => navigation.navigate("Cuenta"),
+          },
+          {
+            text: "Más tarde",
+            onPress: () => console.log("OK Pressed"),
+            style: "cancel",
+          },
+        ],
+        { cancelable: false }
+      );
+    }
   }
   async function updateCart(cart_) {
     await firebase

@@ -20,7 +20,7 @@ function Restaurant_medium(props) {
   const [img, setImg] = useState(
     "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
   );
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   function capitalize(word) {
     arr = word.split(" ");

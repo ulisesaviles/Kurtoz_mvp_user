@@ -44,6 +44,9 @@ const SignUp = ({ navigation }) => {
           items: [],
           restaurantId: "",
         },
+        paymentMethods: {
+          data: [],
+        },
       };
       await firebase.firestore().collection("users").add(user);
       await firebase

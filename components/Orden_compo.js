@@ -66,7 +66,7 @@ const Orden_compo = ({ route }) => {
             <Text style={styles.restaurantName}>
               {route.params.order.data.restaurantName}
             </Text>
-            <Text style={styles.details}>{`Order ${
+            <Text style={styles.details}>{`Órden ${
               route.params.order.data.type
             }  •  ${humanDate(route.params.order.data.date)}`}</Text>
           </View>
@@ -251,11 +251,9 @@ const styles = StyleSheet.create({
   },
   totalStr: {
     fontSize: 25,
-    fontWeight: "400",
   },
   totalNum: {
     fontSize: 20,
-    fontWeight: "300",
   },
   ScrollView: {},
 });

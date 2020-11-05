@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 
 const Perfil = ({ navigation, route }) => {
   const [userName, setUserName] = useState("Iniciar Sesión");
-  const [editAccount, setEdit] = useState("Editar perfil");
+  const [editAccount, setEdit] = useState("Usuario");
   let userData = {};
   const [gotUser, setGotUser] = useState(false);
 
@@ -44,23 +44,23 @@ const Perfil = ({ navigation, route }) => {
       <View style={styles.header} />
       <View style={styles.scrollContainer}>
         <ScrollView>
-          <TouchableOpacity>
-            <View style={styles.profileContainer}>
-              <View style={styles.ppContainer}>
-                <MaterialIcons
-                  name={"account-circle"}
-                  size={60}
-                  color={"black"}
-                  style={styles.pp}
-                />
-              </View>
-              <View style={styles.profileTextContainer}>
-                <Text style={styles.userName}>{userName}</Text>
-                <Text style={styles.editAccount}>{editAccount}</Text>
-              </View>
+          {/* <TouchableOpacity> */}
+          <View style={styles.profileContainer}>
+            <View style={styles.ppContainer}>
+              <MaterialIcons
+                name={"account-circle"}
+                size={60}
+                color={"black"}
+                style={styles.pp}
+              />
             </View>
-          </TouchableOpacity>
-          <TouchableOpacity
+            <View style={styles.profileTextContainer}>
+              <Text style={styles.userName}>{userName}</Text>
+              <Text style={styles.editAccount}>{editAccount}</Text>
+            </View>
+          </View>
+          {/* </TouchableOpacity> */}
+          {/* <TouchableOpacity
             onPress={() => {
               navigation.navigate("Tus Favoritos");
             }}
@@ -74,7 +74,7 @@ const Perfil = ({ navigation, route }) => {
               />
               <Text style={styles.settingTitle}>Tus Favoritos</Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("PaymentMethod");

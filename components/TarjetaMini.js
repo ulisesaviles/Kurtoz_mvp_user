@@ -3,34 +3,65 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { MaterialIcons } from "@expo/vector-icons";
+import { SimpleLineIcons } from "@expo/vector-icons";
 
-function TarjetaMini() {
+function TarjetaMini(props) {
   const navigation = useNavigation();
+  console.log(props);
+
+  function cardBrand() {
+    if (props.brand == "mastercard") {
+      return (
+        <Image
+          source={require("../assets/masterCard_icon.png")}
+          style={styles.photo}
+        />
+      );
+    } else if (props.brand == "visa") {
+      return (
+        <Image
+          source={require("../assets/visa_icon.png")}
+          style={styles.photo}
+        />
+      );
+    } else if (props.brand == "amex") {
+      return (
+        <Image
+          source={require("../assets/americanExpress_icon.png")}
+          style={styles.photo}
+        />
+      );
+    } else {
+      return (
+        <SimpleLineIcons
+          name="credit-card"
+          size={35}
+          style={{ marginHorizontal: "3%" }}
+          color="black"
+        />
+      );
+    }
+  }
 
   return (
-    <TouchableOpacity
-    // onPress={() => {
-    //   navigation.navigate("Food_compo");
-    // }}
-    >
-      <View style={styles.superContainer}>
-        <View style={styles.container}>
-          <View style={styles.cardContainer}>
-            <Image
-              source={require("../assets/masterCard_icon.png")}
-              style={styles.photo}
-            />
-            <Text style={styles.cardNumber}>**** **** **** 1234</Text>
-          </View>
-          <MaterialIcons
+    // <TouchableOpacity>
+    <View style={styles.superContainer}>
+      <View style={styles.container}>
+        <View style={styles.cardContainer}>
+          {cardBrand()}
+          <Text
+            style={styles.cardNumber}
+          >{`••••  ••••  ••••  ${props.last4}`}</Text>
+        </View>
+        {/* <MaterialIcons
             name="chevron-right"
             size={24}
             color="rgb(100,100,100)"
-          />
-        </View>
-        <View style={styles.separador} />
+          /> */}
       </View>
-    </TouchableOpacity>
+      <View style={styles.separador} />
+    </View>
+    // </TouchableOpacity>
   );
 }
 
@@ -81,7 +112,7 @@ const styles = StyleSheet.create({
   cardNumber: {
     fontSize: 18,
     marginLeft: "5%",
-    fontWeight: "300",
+    fontWeight: "400",
   },
 });
 
