@@ -1,72 +1,56 @@
-import React, { useState } from "react";
+import React from "react";
 import "react-native-gesture-handler";
-import { StyleSheet, Text, View } from "react-native";
-import firebase from "../database/database";
-// import axios from "axios";
-// import Picker from "@react-native-community/picker";
-import AsyncStorage from "@react-native-community/async-storage";
-// import { firebase } from "@react-native-firebase/functions";
-// import functions from "@react-native-firebase/functions";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
+import GoBackBtn from "./GoBackBtn";
 
 const About = ({ navigation }) => {
-  const [obj, setObj] = useState("Aboutt");
-  // const storeData = async (value) => {
-  //   try {
-  //     const jsonValue = JSON.stringify(value);
-  //     await AsyncStorage.setItem("userData", jsonValue);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-  // storeData({ name: "Ulises", apellido: "Aviles" });
-
-  async function getUser() {
-    try {
-      const value = await AsyncStorage.getItem("userData");
-      if (value !== null) {
-        setObj(value);
-        console.log(value);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  getUser();
-
-  // axios({
-  //   method: "GET",
-  //   url:
-  //     "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createStripeUser",
-  //   // data: {
-  //   //   email: "alguien@example.com",
-  //   //   id: "CydewFVojffkrVbBuQQF",
-  //   // },
-  // }).then((response) => {
-  //   console.log(response.data);
-  // });
-
-  // axios({
-  //   method: "get",
-  //   url: "http://localhost:5001/food-delivery-app-86ccd/us-central1/sayHello",
-  //   data: {
-  //     name: "Ulises",
-  //   },
-  // }).then((Response) => {
-  //   console.log(Response);
-  // });
+  const terms = [
+    {
+      title: "¿Quién tiene acceso a mi información?",
+      bullets: [
+        "Los desarrolladores de la aplicación no comparten su información con el exterior por motivos legales.",
+        "Ningún usuario tiene acceso a la información de otro usuario.",
+      ],
+    },
+    {
+      title: "¿Quién tiene acceso a mis tarjetas de crédito/débito?",
+      bullets: [
+        "Nadie, para disminuir riesgsos la aplicación trabaja con el manejador de pagos 'Stripe', una api de pagos segura que proteje su información.",
+        "La aplicación no conoce el número completo de su tarjeta, sólamente tenemos acceso a los últimos cuatro dígitos.",
+      ],
+    },
+  ];
 
   return (
     <View style={styles.container}>
-      <Text style={{ alignSelf: "center", fontSize: 50 }}>{obj}</Text>
-      {/* <Picker
-      // selectedValue={"java"}
-      // style={{ height: 50, width: 100 }}
-
-      // onValueChange={}
-      >
-        <Picker.Item label="Java" value="java" />
-        <Picker.Item label="JavaScript" value="js" />
-      </Picker> */}
+      <View style={styles.headerContainer}>
+        <View style={styles.goBackContainer}>
+          <GoBackBtn style={styles.goBack} />
+        </View>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.header}>Acerca del app</Text>
+        </View>
+      </View>
+      <ScrollView>
+        <View style={styles.termsContainer}>
+          {terms.map((termCategory) => (
+            <View style={styles.termCategoryContainer}>
+              <Text style={styles.termTitle}>{termCategory.title}</Text>
+              {termCategory.bullets.map((bullet) => (
+                <View style={styles.bulletContainer}>
+                  <Text style={styles.bullet}>•</Text>
+                  <Text>{bullet}</Text>
+                </View>
+              ))}
+            </View>
+          ))}
+          <View style={styles.developedByContainer}>
+            <Text style={styles.developer}>
+              Desarrollado por: Ulises Aviles
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -75,7 +59,63 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
     backgroundColor: "rgb(240,240,240)",
-    justifyContent: "space-around",
+    // justifyContent: "space-around",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    height: "12%",
+    borderBottomColor: "rgb(100,100,100)",
+    backgroundColor: "rgb(255,255,255)",
+    marginBottom: 1,
+  },
+  goBackContainer: {
+    height: "100%",
+    paddingTop: "12%",
+    paddingLeft: "5%",
+    width: "20%",
+  },
+  headerTitleContainer: {
+    width: "60%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    marginTop: "15%",
+    fontSize: 25,
+    fontWeight: "600",
+  },
+  termsContainer: {
+    marginTop: "2%",
+    marginBottom: "30%",
+  },
+  termTitle: {
+    fontSize: 22,
+    fontWeight: "500",
+    marginBottom: 8,
+  },
+  termCategoryContainer: {
+    backgroundColor: "rgb(255, 255, 255)",
+    paddingHorizontal: "8%",
+    paddingVertical: 20,
+    marginBottom: 5,
+  },
+  bulletContainer: {
+    flexDirection: "row",
+    marginBottom: 4,
+    paddingRight: "5%",
+  },
+  bullet: {
+    fontWeight: "900",
+    marginHorizontal: "2%",
+  },
+  developedByContainer: {
+    alignItems: "center",
+    marginVertical: 5,
+  },
+  developer: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "rgb(80, 80, 80)",
   },
 });
 

@@ -69,10 +69,7 @@ export default function App() {
           <Stack.Screen
             name="Terms"
             component={Terms}
-            options={{
-              // headerTransparent: "true",
-              title: "Términos y condiciones",
-            }}
+            options={{ headerTransparent: "true", title: "", headerLeft: null }}
           />
           <Stack.Screen
             name="Login"

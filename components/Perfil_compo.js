@@ -24,6 +24,7 @@ const Perfil = ({ navigation, route }) => {
       try {
         userData = JSON.parse(await AsyncStorage.getItem("userData"));
         setUserName(userData.name);
+        setEdit(userData.email);
       } catch (e) {
         console.log(e);
       }
@@ -118,6 +119,21 @@ const Perfil = ({ navigation, route }) => {
                 color={"rgb(0,0,0)"}
               />
               <Text style={styles.settingTitle}>Acerca del app</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Terms");
+            }}
+          >
+            <View style={styles.settingContainer}>
+              <MaterialIcons
+                style={styles.settingLogo}
+                name={"format-list-bulleted"}
+                size={25}
+                color={"rgb(0,0,0)"}
+              />
+              <Text style={styles.settingTitle}>Términos y condiciones</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity

@@ -1,6 +1,7 @@
 import React from "react";
 import "react-native-gesture-handler";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
+import GoBackBtn from "./GoBackBtn";
 
 const Terms = () => {
   const terms = [
@@ -35,6 +36,14 @@ const Terms = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <View style={styles.goBackContainer}>
+          <GoBackBtn style={styles.goBack} />
+        </View>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.header}>Términos y condiciones</Text>
+        </View>
+      </View>
       <ScrollView>
         <View style={styles.termsContainer}>
           {terms.map((termCategory) => (
@@ -82,6 +91,29 @@ const styles = StyleSheet.create({
   bullet: {
     fontWeight: "900",
     marginHorizontal: "2%",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    height: "12%",
+    borderBottomColor: "rgb(100,100,100)",
+    backgroundColor: "rgb(255,255,255)",
+    marginBottom: 1,
+  },
+  goBackContainer: {
+    height: "100%",
+    paddingTop: "12%",
+    paddingLeft: "5%",
+    width: "15%",
+  },
+  headerTitleContainer: {
+    width: "70%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    marginTop: "15%",
+    fontSize: 25,
+    fontWeight: "600",
   },
 });
 
