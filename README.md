@@ -1,5 +1,5 @@
 # Delivery app for kurtoz #
-### MVP version ###
+#### (MVP version) ####
 ## To run it: ##
 * npm install
 * npm start
