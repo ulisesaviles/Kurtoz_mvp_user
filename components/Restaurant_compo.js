@@ -15,6 +15,7 @@ import FoodMini from "./FoodMini";
 import FoodCategory from "./FoodCategory";
 import firebase from "../database/database";
 import GoBackBtn from "./GoBackBtn";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const Restaurant_compo = ({ navigation, route }) => {
   const [open, setOpen] = useState(true);
@@ -177,10 +178,21 @@ const Restaurant_compo = ({ navigation, route }) => {
                 >{`Abierto de ${restaurantSchedule}`}</Text>
               </View>
             </View>
-            <View style={styles.locationContainer}>
-              <Entypo name="location-pin" size={18} color="grey" />
-              <Text style={styles.location}>{restaurantAddress}</Text>
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Map", {
+                  restaurantName: restaurantName,
+                  address: restaurantAddress,
+                });
+              }}
+            >
+              <View style={styles.locationContainer}>
+                <Entypo name="location-pin" size={18} color="grey" />
+                <Text style={styles.location}>
+                  {`${restaurantAddress.substr(0, 50)}...`}
+                </Text>
+              </View>
+            </TouchableOpacity>
             <View style={styles.menuContainer}>
               <Text style={styles.menu}>{capitalize(menus[0].menuName)}</Text>
             </View>
@@ -252,7 +264,10 @@ const Restaurant_compo = ({ navigation, route }) => {
           </View>
           <View style={styles.locationContainer}>
             <Entypo name="location-pin" size={18} color="grey" />
-            <Text style={styles.location}>{restaurantAddress}</Text>
+            <Text style={styles.location}>{`${restaurantAddress.substr(
+              0,
+              50
+            )}...`}</Text>
           </View>
           <View style={styles.menuContainer}>
             <Text style={styles.menu}>{menuName}</Text>
@@ -309,13 +324,16 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(255, 255, 255)",
     height: 60,
     marginBottom: 2,
-    padding: "5%",
+    paddingHorizontal: "5%",
     flexDirection: "row",
     alignItems: "center",
   },
   location: {
     fontWeight: "300",
     fontSize: 16,
+    width: "80%",
+    flexShrink: 1,
+    marginHorizontal: "5%",
   },
   menuContainer: {
     backgroundColor: "rgb(255, 255, 255)",
