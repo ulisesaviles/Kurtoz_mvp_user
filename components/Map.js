@@ -1,6 +1,6 @@
 import React from "react";
 import "react-native-gesture-handler";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import GoBackBtn from "./GoBackBtn";
 import { WebView } from "react-native-webview";
 

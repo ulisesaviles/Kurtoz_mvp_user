@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
   category: {
     fontSize: 25,
-    fontWeight: "300",
+    fontWeight: "500",
   },
 });
 
