@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ImageBackground,
+  Alert,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -27,8 +28,10 @@ const Food_compo = ({ navigation, route }) => {
   const [img, setImg] = useState(
     "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
   );
-  const [modifiers, setModifiers] = useState([]);
-  const [booleanModifiers, setBooleanModifires] = useState([]);
+  // const [modifiers, setModifiers] = useState([]);
+  // const [booleanModifiers, setBooleanModifires] = useState([]);
+  const [modifierGroups, setModifierGroups] = useState([]);
+  const [booleanModifierGroups, setBooleanModifierGroups] = useState([[]]);
   const [variants, setVariants] = useState([]);
   const [booleanVariants, setBooleanVariants] = useState([]);
   const [cuantity, setCuantity] = useState(1);
@@ -44,7 +47,6 @@ const Food_compo = ({ navigation, route }) => {
         value = JSON.parse(value);
         if (value !== null) {
           setUserData(value);
-          console.log(value);
         }
       } catch (e) {
         console.log(e);
@@ -82,7 +84,7 @@ const Food_compo = ({ navigation, route }) => {
     if (
       title == " - - -" &&
       img == "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif" &&
-      modifiers.length == 0 &&
+      // modifiers.length == 0 &&
       description == " - - - - - - - - - - - - - - - - - - -\n - - -" &&
       gotUser == false
     ) {
@@ -107,20 +109,53 @@ const Food_compo = ({ navigation, route }) => {
           setBooleanVariants(booleanVariants);
           setVariants(variants);
           setVariant(variants[0].name);
-          for (let i = 0; i < product.data().modifiers.length; i++) {
-            modifiers.push(product.data().modifiers[i]);
+          setModifierGroups(product.data().modifierGroups);
+          console.log(product.data().modifierGroups);
+          for (let i = 0; i < product.data().modifierGroups.length; i++) {
+            if (i != 0) {
+              booleanModifierGroups.push([]);
+            }
+            for (
+              let j = 0;
+              j < product.data().modifierGroups[i].modifiers.length;
+              j++
+            ) {
+              booleanModifierGroups[i].push(-1);
+            }
           }
-          setModifiers(modifiers);
-          getModifires(restaurantId, productId);
+          setBooleanModifierGroups(booleanModifierGroups);
+          update(" ");
+          // for (let i = 0; i < product.data().modifiers.length; i++) {
+          //   modifiers.push(product.data().modifiers[i]);
+          // }
+          // setModifiers(modifiers);
+          // getModifires(restaurantId, productId);
         })
         .catch((err) => {
           console.log("Error getting documents", err);
         });
-      for (let i = 0; i < modifiers.length; i++) {
-        booleanModifiers.push(-1);
-      }
-      setBooleanModifires(booleanModifiers);
+      console.log(booleanModifierGroups);
+      // for (let i = 0; i < modifiers.length; i++) {
+      //   booleanModifiers.push(-1);
+      // }
+      // setBooleanModifires(booleanModifiers);
     }
+  }
+
+  function correctModifierQuantities() {
+    let temp;
+    for (let i = 0; i < booleanModifierGroups.length; i++) {
+      temp = 0;
+      for (let j = 0; j < booleanModifierGroups[i].length; j++) {
+        if (booleanModifierGroups[i][j] == 1) {
+          temp++;
+        }
+      }
+      if (temp > modifierGroups[i].maxSelection) {
+        return [false, modifierGroups[i].name];
+      }
+    }
+    return [true];
   }
 
   async function pushCart() {
@@ -131,20 +166,50 @@ const Food_compo = ({ navigation, route }) => {
       restaurantId: route.params.restaurantId,
       productId: route.params.foodId,
       cuantity: cuantity,
-      modifires: [],
+      modifierGroups: [],
       variant: variant,
       variantIndex: variantIndex,
     };
-    for (let i = 0; i < booleanModifiers.length; i++) {
-      if (booleanModifiers[i] == 1) {
-        itemToPush.modifires.push({
-          id: modifiers[i].id,
-          name: modifiers[i].name,
-          price: modifiers[i].price,
-        });
-        itemToPush.productPrice += modifiers[i].price;
+    if (!correctModifierQuantities()[0]) {
+      Alert.alert(
+        `Excediste la cantidad permitida de: "${
+          correctModifierQuantities()[1]
+        }"`,
+        "Selecciona menos",
+        [{ text: "Entendido", onPress: () => {} }],
+        { cancelable: false }
+      );
+      return;
+    }
+    for (let i = 0; i < booleanModifierGroups.length; i++) {
+      itemToPush.modifierGroups.push({
+        name: modifierGroups[i].name,
+        selected: [],
+      });
+      for (let j = 0; j < booleanModifierGroups[i].length; j++) {
+        if (booleanModifierGroups[i][j] == 1) {
+          itemToPush.modifierGroups[i].selected.push({
+            name: modifierGroups[i].modifiers[j].name,
+            quantity: 1,
+            price: modifierGroups[i].modifiers[j].price,
+          });
+          itemToPush.productPrice += modifierGroups[i].modifiers[j].price;
+        }
+      }
+      if (itemToPush.modifierGroups[i].selected.length == 0) {
+        itemToPush.modifierGroups.splice(i, 1);
+        if (modifierGroups[i].required) {
+          Alert.alert(
+            `Debes seleccionar al menos un: "${modifierGroups[i].name}"`,
+            "",
+            [{ text: "Entendido", onPress: () => {} }],
+            { cancelable: false }
+          );
+          return;
+        }
       }
     }
+    console.log(itemToPush);
     getCurrentCart(itemToPush);
   }
 
@@ -175,33 +240,34 @@ const Food_compo = ({ navigation, route }) => {
         { merge: true }
       )
       .then((res) => {
-        navigation.navigate("Cart", { needUpdate: true, hola: "hola" });
+        // navigation.navigate("Cart", { needUpdate: true, hola: "hola" });
+        navigation.navigate("Cart");
       });
   }
 
-  async function getModifires(restaurantId) {
-    for (let i = 0; i < modifiers.length; i++) {
-      await firebase
-        .firestore()
-        .collection("restaurants")
-        .doc(restaurantId)
-        .collection("modifiers")
-        .doc(modifiers[i])
-        .get()
-        .then((modifier) => {
-          modifiers[i] = {
-            id: modifier.id,
-            name: modifier.data().name,
-            price: modifier.data().price,
-          };
-        })
-        .catch((err) => {
-          console.log("Error getting documents", err);
-        });
-      setModifiers(modifiers);
-    }
-    update(" ");
-  }
+  // async function getModifires(restaurantId) {
+  //   for (let i = 0; i < modifiers.length; i++) {
+  //     await firebase
+  //       .firestore()
+  //       .collection("restaurants")
+  //       .doc(restaurantId)
+  //       .collection("modifiers")
+  //       .doc(modifiers[i])
+  //       .get()
+  //       .then((modifier) => {
+  //         modifiers[i] = {
+  //           id: modifier.id,
+  //           name: modifier.data().name,
+  //           price: modifier.data().price,
+  //         };
+  //       })
+  //       .catch((err) => {
+  //         console.log("Error getting documents", err);
+  //       });
+  //     setModifiers(modifiers);
+  //   }
+  //   update(" ");
+  // }
 
   return (
     <View>
@@ -222,6 +288,7 @@ const Food_compo = ({ navigation, route }) => {
             <Text style={styles.description}>{description}</Text>
           </View>
           <View style={styles.opcionesContainer}>
+            <Text style={styles.updater}>{updater}</Text>
             <Text style={styles.opciones}>Variantes</Text>
           </View>
           <View>
@@ -254,12 +321,11 @@ const Food_compo = ({ navigation, route }) => {
               </View>
             ))}
           </View>
-          <View style={styles.opcionesContainer}>
+          {/* <View style={styles.opcionesContainer}>
             <Text style={styles.opciones}>Extras</Text>
-            <Text style={styles.updater}>{updater}</Text>
-          </View>
+          </View> */}
           <View>
-            {modifiers.map((modifier) => (
+            {/* {modifiers.map((modifier) => (
               <View style={styles.optionContainer}>
                 <TouchableOpacity
                   onPress={() => {
@@ -288,6 +354,56 @@ const Food_compo = ({ navigation, route }) => {
                     style={styles.optionPrice}
                   >{` + $ ${modifier.price}.00 MXN`}</Text>
                 </View>
+              </View>
+            ))} */}
+            {modifierGroups.map((modifierGroup) => (
+              <View style={styles.modifierGroupContainer}>
+                <View style={styles.modifierGroupNameContainer}>
+                  <Text style={styles.modifierGroupName}>
+                    {modifierGroup.question}
+                  </Text>
+                  <Text
+                    style={styles.description}
+                  >{`Elige hasta ${modifierGroup.maxSelection}`}</Text>
+                </View>
+                {modifierGroup.modifiers.map((modifier) => (
+                  <View style={styles.optionContainer}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        booleanModifierGroups[
+                          modifierGroups.indexOf(modifierGroup)
+                        ][modifierGroup.modifiers.indexOf(modifier)] *= -1;
+                        setBooleanModifierGroups(booleanModifierGroups);
+                        if (
+                          booleanModifierGroups[
+                            modifierGroups.indexOf(modifierGroup)
+                          ][modifierGroup.modifiers.indexOf(modifier)] == 1
+                        ) {
+                          setModifiersPrice(modifiersPrice + modifier.price);
+                        } else {
+                          setModifiersPrice(modifiersPrice - modifier.price);
+                        }
+                        update(`${booleanModifierGroups}`);
+                      }}
+                    >
+                      <MaterialIcons
+                        name={iconFor(
+                          booleanModifierGroups[
+                            modifierGroups.indexOf(modifierGroup)
+                          ][modifierGroup.modifiers.indexOf(modifier)]
+                        )}
+                        size={26}
+                        color="black"
+                      />
+                    </TouchableOpacity>
+                    <View style={styles.optionTextContainer}>
+                      <Text style={styles.optionText}>{modifier.name}</Text>
+                      <Text
+                        style={styles.optionPrice}
+                      >{` + $ ${modifier.price}.00 MXN`}</Text>
+                    </View>
+                  </View>
+                ))}
               </View>
             ))}
           </View>
@@ -346,7 +462,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(0,0,0)",
   },
   title: {
-    fontSize: 30,
+    fontSize: 35,
     fontWeight: "400",
     marginBottom: 13,
   },
@@ -368,10 +484,24 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(255, 255, 255)",
     padding: 20,
     flexDirection: "row",
+    // backgroundColor: "red",
+  },
+  modifierGroupContainer: {
+    backgroundColor: "rgb(255, 255, 255)",
+    padding: 0,
   },
   opciones: {
-    fontSize: 30,
-    fontWeight: "300",
+    fontSize: 25,
+    fontWeight: "400",
+  },
+  modifierGroupNameContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  modifierGroupName: {
+    fontSize: 20,
+    fontWeight: "500",
+    marginBottom: "1%",
   },
   addToCartBtn: {
     backgroundColor: "rgb(0,0,0)",
@@ -395,6 +525,7 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: "row",
     justifyContent: "space-between",
+    // backgroundColor: "red",
   },
   optionText: {
     fontSize: 20,

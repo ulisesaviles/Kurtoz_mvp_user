@@ -54,11 +54,11 @@ const Pay = ({ navigation, route }) => {
           tempArray.push(false);
         }
         setBooleanPayments(tempArray);
-        console.log(user.data().paymentMethods.data);
+        // console.log(user.data().paymentMethods.data);
       });
   }
 
-  async function handlePayment() {
+  async function handlePayment(userId) {
     // console.log(route.params);
     setPaymentState("loading");
     try {
@@ -68,25 +68,47 @@ const Pay = ({ navigation, route }) => {
           "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/pay",
         data: {
           userId: userId,
-          ammountToPay: route.params.userOrder.total * 100,
+          ammountToPay: route.params.order.total * 100,
           paymentIndex: booleanPayments.indexOf(true),
         },
       }).then(async (response) => {
-        console.log(response);
+        console.log(`RestaurantId: ${route.params.restaurantId}`);
         if (response.status == 200) {
           setPaymentState("success");
           await firebase
             .firestore()
             .collection("restaurants")
-            .doc(route.params.userOrder.restaurantId)
+            .doc(route.params.restaurantId)
             .collection("orders")
-            .add(route.params.restaurantOrder);
+            .add(route.params.order);
           await firebase
             .firestore()
-            .collection("users")
-            .doc(userId)
+            .collection("restaurants")
+            .doc(route.params.restaurantId)
             .collection("orders")
-            .add(route.params.userOrder);
+            .get()
+            .then((orders) => {
+              orders.forEach(async (restaurantOrder) => {
+                if (
+                  restaurantOrder
+                    .data()
+                    .createdAt.isEqual(route.params.order.createdAt)
+                ) {
+                  console.log(`${userId} order has been foud`);
+                  await firebase
+                    .firestore()
+                    .collection("users")
+                    .doc(userId)
+                    .collection("orders")
+                    .add({
+                      restaurantId: route.params.restaurantId,
+                      restaurantImg: route.params.restaurantImg,
+                      orderId: restaurantOrder.id,
+                      restaurantName: route.params.restaurantName,
+                    });
+                }
+              });
+            });
           await firebase
             .firestore()
             .collection("users")
@@ -186,7 +208,7 @@ const Pay = ({ navigation, route }) => {
             ))}
             <TouchableOpacity
               onPress={() => {
-                handlePayment();
+                handlePayment(userId);
               }}
             >
               <View style={styles.payBtn}>
@@ -257,15 +279,13 @@ const Pay = ({ navigation, route }) => {
       </View>
       <View style={styles.headerContainer}>
         <Image
-          source={{ uri: route.params.userOrder.restaurantImg }}
+          source={{ uri: route.params.restaurantImg }}
           style={styles.restaurantImg}
         />
-        <Text style={styles.title}>
-          {route.params.userOrder.restaurantName}
-        </Text>
+        <Text style={styles.title}>{route.params.restaurantName}</Text>
         <Text
           style={styles.total}
-        >{`$ ${route.params.userOrder.total}.00 MXN`}</Text>
+        >{`$ ${route.params.order.total}.00 MXN`}</Text>
         <Text style={styles.invisible}>{updater}</Text>
       </View>
       <ScrollView>{componentForState()}</ScrollView>

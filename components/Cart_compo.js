@@ -83,6 +83,7 @@ const Cart_compo = ({ navigation, route }) => {
       });
   }
   async function completeOrder() {
+    ///////////////////////////////////////////////
     let userHasPaymentMethods = false;
     await firebase
       .firestore()
@@ -100,58 +101,91 @@ const Cart_compo = ({ navigation, route }) => {
         .collection("restaurants")
         .doc(restaurantId)
         .get()
-        .then((restaurant) => {
+        .then(async (restaurant) => {
           setOpen(restaurant.data().open);
           let open_ = restaurant.data().open;
           if (open_ == true) {
-            let today = new Date();
-            today = today.getTime();
-            let userOrder = {
-              date: today,
-              products: cart,
-              restaurantId: restaurantId,
-              restaurantName: restaurantName,
-              restaurantImg: restaurantImg,
-              type: "active",
-              total: total,
-            };
-            let restaurantCart = [];
-            let product;
-            for (let i = 0; i < cart.length; i++) {
-              product = cart[i];
-              // console.log(product);
-              let modifiers = [];
-              for (let j = 0; j < product.modifires.length; j++) {
-                modifiers.push({
-                  id: product.modifires[j].id,
-                  quantity: 1,
-                });
-              }
-              let restaurantProduct = {
-                quantity: product.cuantity,
-                id: product.productId,
-                variant: product.variantIndex,
-                modifiers: modifiers,
-              };
-              restaurantCart.push(restaurantProduct);
-            }
-            let restaurantOrder = {
+            // let today = new Date();
+            // today = today.getTime();
+            let order = {
+              createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+              products: cart, // Quitarle la data del restaurant a cada producto por ser duplicada
               type: "active",
               total: total,
               user: {
-                name: userData_.name,
                 id: userData_.id,
+                name: userData_.name,
               },
-              createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-              products: restaurantCart,
             };
+            let temp = [];
+            for (let i = 0; i < order.products.length; i++) {
+              temp.push({
+                quantity: order.products[i].cuantity,
+                modifierGroups: order.products[i].modifierGroups,
+                productId: order.products[i].productId,
+                productImg: order.products[i].productImg,
+                productName: order.products[i].productName,
+                price: order.products[i].productPrice,
+                variant: order.products[i].variant,
+                variantIndex: order.products[i].variantIndex,
+              });
+            }
+            order.products = temp;
+            // console.log(order);
+            navigation.navigate("Pay", {
+              order: order,
+              restaurantId: restaurantId,
+              restaurantName: restaurantName,
+              restaurantImg: restaurantImg,
+            });
+            // let userOrder = {
+            //   date: today,
+            //   products: cart,
+            //   restaurantId: restaurantId,
+            //   restaurantName: restaurantName,
+            //   restaurantImg: restaurantImg,
+            //   type: "active",
+            //   total: total,
+            // };
+            // let restaurantCart = [];
+            // let product;
+            // for (let i = 0; i < cart.length; i++) {
+            //   product = cart[i];
+            //   // console.log(product);
+            //   let modifiers = [];
+            //   for (let j = 0; j < product.modifires.length; j++) {
+            //     modifiers.push({
+            //       id: product.modifires[j].id,
+            //       quantity: 1,
+            //     });
+            //   }
+            //   let restaurantProduct = {
+            //     quantity: product.cuantity,
+            //     id: product.productId,
+            //     variant: product.variantIndex,
+            //     modifiers: modifiers,
+            //   };
+            //   restaurantCart.push(restaurantProduct);
+            // }
+            // let restaurantOrder = {
+            //   type: "active",
+            //   total: total,
+            //   user: {
+            //     name: userData_.name,
+            //     id: userData_.id,
+            //   },
+            //   createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+            //   products: restaurantCart,
+            // };
+
+            //////////////////////////////////////////////////////////////////////
 
             // await firebase
             //   .firestore()
             //   .collection("restaurants")
             //   .doc(restaurantId)
             //   .collection("orders")
-            //   .add(restaurantOrder);
+            //   .add(order);
 
             // await firebase
             //   .firestore()
@@ -160,10 +194,12 @@ const Cart_compo = ({ navigation, route }) => {
             //   .collection("orders")
             //   .add(userOrder);
 
-            navigation.navigate("Pay", {
-              restaurantOrder: restaurantOrder,
-              userOrder: userOrder,
-            });
+            // navigation.navigate("Pay", {
+            //   // restaurantOrder: restaurantOrder,
+            //   // userOrder: userOrder,
+            //   order: order,
+            //   restaurantId: restaurantId,
+            // });
 
             // setRestaurantId(" -");
             // updateCart([]);
@@ -252,19 +288,28 @@ const Cart_compo = ({ navigation, route }) => {
                               </Text>
                             </View>
                             <View style={styles.foodMiniExtraIngredients}>
-                              {cartItem.modifires.map((modifier) => (
-                                <View
-                                  style={
-                                    styles.foodMiniExtraIngredientContainer
-                                  }
-                                >
-                                  <Text style={styles.extraPrice}>
-                                    {`+ $${modifier.price}.00 MXN`}
+                              {cartItem.modifierGroups.map((modifierGroup) => (
+                                <>
+                                  <Text style={styles.variant}>
+                                    {`• ${modifierGroup.name}:`}
                                   </Text>
-                                  <Text style={styles.foodMiniExtraIngredient}>
-                                    {modifier.name}
-                                  </Text>
-                                </View>
+                                  {modifierGroup.selected.map((modifier) => (
+                                    <View
+                                      style={
+                                        styles.foodMiniExtraIngredientContainer
+                                      }
+                                    >
+                                      <Text style={styles.extraPrice}>
+                                        {`+ $${modifier.price}.00 MXN`}
+                                      </Text>
+                                      <Text
+                                        style={styles.foodMiniExtraIngredient}
+                                      >
+                                        {modifier.name}
+                                      </Text>
+                                    </View>
+                                  ))}
+                                </>
                               ))}
                             </View>
                             <Text style={styles.foodMiniPrice}>
@@ -415,6 +460,7 @@ const styles = StyleSheet.create({
   foodMiniFoodName: {
     fontSize: 20,
     fontWeight: "400",
+    // backgroundColor: "red",
   },
   foodMinitextContainer: {
     width: "65%",
