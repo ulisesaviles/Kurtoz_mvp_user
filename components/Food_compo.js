@@ -159,58 +159,75 @@ const Food_compo = ({ navigation, route }) => {
   }
 
   async function pushCart() {
-    let itemToPush = {
-      productName: title,
-      productPrice: price,
-      productImg: img,
-      restaurantId: route.params.restaurantId,
-      productId: route.params.foodId,
-      cuantity: cuantity,
-      modifierGroups: [],
-      variant: variant,
-      variantIndex: variantIndex,
-    };
-    if (!correctModifierQuantities()[0]) {
-      Alert.alert(
-        `Excediste la cantidad permitida de: "${
-          correctModifierQuantities()[1]
-        }"`,
-        "Selecciona menos",
-        [{ text: "Entendido", onPress: () => {} }],
-        { cancelable: false }
-      );
-      return;
-    }
-    for (let i = 0; i < booleanModifierGroups.length; i++) {
-      itemToPush.modifierGroups.push({
-        name: modifierGroups[i].name,
-        selected: [],
-      });
-      for (let j = 0; j < booleanModifierGroups[i].length; j++) {
-        if (booleanModifierGroups[i][j] == 1) {
-          itemToPush.modifierGroups[i].selected.push({
-            name: modifierGroups[i].modifiers[j].name,
-            quantity: 1,
-            price: modifierGroups[i].modifiers[j].price,
-          });
-          itemToPush.productPrice += modifierGroups[i].modifiers[j].price;
-        }
-      }
-      if (itemToPush.modifierGroups[i].selected.length == 0) {
-        itemToPush.modifierGroups.splice(i, 1);
-        if (modifierGroups[i].required) {
+    // route.params.restaurantId
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(userData.id)
+      .get()
+      .then((user) => {
+        if (user.data().cart.restaurantId == route.params.restaurantId) {
+          let itemToPush = {
+            productName: title,
+            productPrice: price,
+            productImg: img,
+            restaurantId: route.params.restaurantId,
+            productId: route.params.foodId,
+            cuantity: cuantity,
+            modifierGroups: [],
+            variant: variant,
+            variantIndex: variantIndex,
+          };
+          if (!correctModifierQuantities()[0]) {
+            Alert.alert(
+              `Excediste la cantidad permitida de: "${
+                correctModifierQuantities()[1]
+              }"`,
+              "Selecciona menos",
+              [{ text: "Entendido", onPress: () => {} }],
+              { cancelable: false }
+            );
+            return;
+          }
+          for (let i = 0; i < booleanModifierGroups.length; i++) {
+            itemToPush.modifierGroups.push({
+              name: modifierGroups[i].name,
+              selected: [],
+            });
+            for (let j = 0; j < booleanModifierGroups[i].length; j++) {
+              if (booleanModifierGroups[i][j] == 1) {
+                itemToPush.modifierGroups[i].selected.push({
+                  name: modifierGroups[i].modifiers[j].name,
+                  quantity: 1,
+                  price: modifierGroups[i].modifiers[j].price,
+                });
+                itemToPush.productPrice += modifierGroups[i].modifiers[j].price;
+              }
+            }
+            if (itemToPush.modifierGroups[i].selected.length == 0) {
+              itemToPush.modifierGroups.splice(i, 1);
+              if (modifierGroups[i].required) {
+                Alert.alert(
+                  `Debes seleccionar al menos un: "${modifierGroups[i].name}"`,
+                  "",
+                  [{ text: "Entendido", onPress: () => {} }],
+                  { cancelable: false }
+                );
+                return;
+              }
+            }
+          }
+          console.log(itemToPush);
+          getCurrentCart(itemToPush);
+        } else {
           Alert.alert(
-            `Debes seleccionar al menos un: "${modifierGroups[i].name}"`,
-            "",
+            `No puedes solicitar cosas de varios restaurantes a la vez`,
+            "Primero finaliza tu órden actual o vacía tu carrito",
             [{ text: "Entendido", onPress: () => {} }],
             { cancelable: false }
           );
-          return;
         }
-      }
-    }
-    console.log(itemToPush);
-    getCurrentCart(itemToPush);
+      });
   }
 
   async function getCurrentCart(itemToPush) {
