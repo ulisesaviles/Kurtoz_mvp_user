@@ -20,6 +20,7 @@ const Ordenes_compo = () => {
   const [doneRequest, setDoneRequest] = useState(false);
   let userData;
   const [gotUser, setGotUser] = useState(false);
+  const [itemsCount, setItemsCount] = useState([]);
 
   async function getUser() {
     if (!gotUser) {
@@ -29,7 +30,6 @@ const Ordenes_compo = () => {
         value = JSON.parse(value);
         if (value !== null) {
           userData = value;
-          console.log(value);
         }
       } catch (e) {
         console.log(e);
@@ -47,29 +47,59 @@ const Ordenes_compo = () => {
         }
       }
     }
-    console.log(array);
     return array.slice(0, 10);
   }
 
   async function getOrders() {
     if (!doneRequest && !gotUser) {
       await getUser();
-      console.log(userData);
       setDoneRequest(true);
       await firebase
         .firestore()
         .collection("users")
         .doc(userData.id)
         .collection("orders")
-        .onSnapshot((orders_) => {
+        .onSnapshot(async (orders_) => {
           let orders__ = [];
-          orders_.forEach((order) => {
-            orders__.push({
-              id: order.id,
-              data: order.data(),
-            });
+          await orders_.forEach(async (order) => {
+            await firebase
+              .firestore()
+              .collection("restaurants")
+              .doc(order.data().restaurantId)
+              .collection("orders")
+              .doc(order.data().orderId)
+              .onSnapshot((restaurantOrder) => {
+                let exists = false;
+                for (let i = 0; i < orders__.length; i++) {
+                  if (
+                    orders__[i].order.createdAt.isEqual(
+                      restaurantOrder.data().createdAt
+                    )
+                  ) {
+                    exists = true;
+                    orders__[i] = {
+                      auxData: order.data(),
+                      order: restaurantOrder.data(),
+                    };
+                  }
+                }
+                if (!exists) {
+                  orders__.push({
+                    auxData: order.data(),
+                    order: restaurantOrder.data(),
+                  });
+                }
+                update(order.data().orderId);
+                let temp = [];
+                for (let i = 0; i < orders__.length; i++) {
+                  temp.push(0);
+                  for (let j = 0; j < orders__[i].order.products.length; j++) {
+                    temp[i] += orders__[i].order.products[j].quantity;
+                  }
+                }
+                setItemsCount(temp);
+              });
           });
-          console.log(orders__);
           orders__ = sort(orders__);
           setOrders(orders__);
           update(orders.length);
@@ -136,6 +166,7 @@ const Ordenes_compo = () => {
             {orders.map((order) => (
               <TouchableOpacity
                 onPress={() => {
+                  console.log(order);
                   navigation.navigate("Orden", {
                     order: order,
                   });
@@ -144,20 +175,36 @@ const Ordenes_compo = () => {
                 <View style={styles.ordenContainer}>
                   <Image
                     source={{
-                      uri: order.data.restaurantImg,
+                      uri: order.auxData.restaurantImg,
                     }}
                     style={styles.restaurantImg}
                   />
                   <View style={styles.textContainer}>
                     <Text style={styles.restaurantName}>
-                      {order.data.restaurantName}
+                      {order.auxData.restaurantName}
                     </Text>
-                    <Text
-                      style={styles.detailLine}
-                    >{`${order.data.products.length} items • $${order.data.total}.00 MXN`}</Text>
-                    <Text style={styles.detailLine}>{`${humanDate(
-                      order.data.date
-                    )} • ${capitalize(order.data.type)}`}</Text>
+                    <Text style={styles.detailLine}>{`${
+                      itemsCount[orders.indexOf(order)]
+                    } artículos • $${order.order.total}.00 MXN`}</Text>
+                    <View style={styles.inlineContainer}>
+                      <Text style={styles.detailLine}>{`${humanDate(
+                        order.order.createdAt.toDate()
+                      )} • `}</Text>
+                      <Text
+                        style={{
+                          color:
+                            order.order.type == "active" ||
+                            order.order.type == "ready"
+                              ? "rgb(0, 200, 0)"
+                              : "rgb(0,0,0)",
+                          fontWeight:
+                            order.order.type == "active" ||
+                            order.order.type == "ready"
+                              ? "600"
+                              : "400",
+                        }}
+                      >{`${capitalize(order.order.type)}`}</Text>
+                    </View>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -201,6 +248,7 @@ const styles = StyleSheet.create({
   },
   updater: {
     color: "rgb(255, 255, 255)",
+    fontSize: 1,
   },
   restaurantImg: {
     height: 90,
@@ -221,6 +269,9 @@ const styles = StyleSheet.create({
   },
   ScrollView: {
     height: "100%",
+  },
+  inlineContainer: {
+    flexDirection: "row",
   },
 });
 

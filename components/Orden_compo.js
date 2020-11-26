@@ -54,7 +54,7 @@ const Orden_compo = ({ route }) => {
         <View style={styles.imageContainer}>
           <ImageBackground
             source={{
-              uri: route.params.order.data.restaurantImg,
+              uri: route.params.order.auxData.restaurantImg,
             }}
             style={styles.img}
           >
@@ -64,17 +64,19 @@ const Orden_compo = ({ route }) => {
         <View style={styles.contentContainer}>
           <View style={styles.detailsContaienr}>
             <Text style={styles.restaurantName}>
-              {route.params.order.data.restaurantName}
+              {route.params.order.auxData.restaurantName}
             </Text>
             <Text style={styles.details}>{`Órden ${
-              route.params.order.data.type
-            }  •  ${humanDate(route.params.order.data.date)}`}</Text>
+              route.params.order.order.type
+            }  •  ${humanDate(
+              route.params.order.order.createdAt.toDate()
+            )}`}</Text>
           </View>
           <View style={styles.yourOrderContainer}>
             <Text style={styles.yourOrder}>Tu órden</Text>
           </View>
           <>
-            {route.params.order.data.products.map((product) => (
+            {route.params.order.order.products.map((product) => (
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("Food_compo", {
@@ -88,7 +90,7 @@ const Orden_compo = ({ route }) => {
                     <View style={styles.foodMiniTtitleContainer}>
                       <View style={styles.cuantityContainer}>
                         <Text style={styles.foodMiniCuantity}>
-                          {product.cuantity}
+                          {product.quantity}
                         </Text>
                       </View>
                       <Text style={styles.foodMiniFoodName}>
@@ -99,15 +101,32 @@ const Orden_compo = ({ route }) => {
                       <Text style={styles.variant}>{product.variant}</Text>
                     </View>
                     <View style={styles.foodMiniExtraIngredients}>
-                      {product.modifires.map((modifier) => (
-                        <View style={styles.foodMiniExtraIngredientContainer}>
-                          <Text style={styles.extraPrice}>
-                            {`+ $${modifier.price}.00 MXN`}
+                      {product.modifierGroups.map((modifierGroup) => (
+                        // <View style={styles.foodMiniExtraIngredientContainer}>
+                        //   <Text style={styles.extraPrice}>
+                        //     {`+ $${modifier.price}.00 MXN`}
+                        //   </Text>
+                        //   <Text style={styles.foodMiniExtraIngredient}>
+                        //     {modifier.name}
+                        //   </Text>
+                        // </View>
+                        <>
+                          <Text style={styles.variant}>
+                            {`• ${modifierGroup.name}:`}
                           </Text>
-                          <Text style={styles.foodMiniExtraIngredient}>
-                            {modifier.name}
-                          </Text>
-                        </View>
+                          {modifierGroup.selected.map((modifier) => (
+                            <View
+                              style={styles.foodMiniExtraIngredientContainer}
+                            >
+                              <Text style={styles.extraPrice}>
+                                {`+ $${modifier.price}.00 MXN`}
+                              </Text>
+                              <Text style={styles.foodMiniExtraIngredient}>
+                                {modifier.name}
+                              </Text>
+                            </View>
+                          ))}
+                        </>
                       ))}
                     </View>
                     <Text style={styles.foodMiniPrice}>
@@ -128,7 +147,7 @@ const Orden_compo = ({ route }) => {
             <Text style={styles.totalStr}>Total: </Text>
             <Text
               style={styles.totalNum}
-            >{`$ ${route.params.order.data.total}.00 MXN`}</Text>
+            >{`$ ${route.params.order.order.total}.00 MXN`}</Text>
           </View>
         </View>
       </ScrollView>
