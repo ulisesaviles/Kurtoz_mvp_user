@@ -7,6 +7,8 @@ import {
   ScrollView,
   TextInput,
   Text,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import firebase from "../database/database";
@@ -78,12 +80,34 @@ const Buscar_compo = ({ navigation }) => {
     setProductsNRestaurants(productsNRestaurants_);
   }
   const [textInput, setTextInput] = useState("");
+  var normalize = (function () {
+    var from = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑñÇç",
+      to = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuunncc",
+      mapping = {};
+
+    for (var i = 0, j = from.length; i < j; i++)
+      mapping[from.charAt(i)] = to.charAt(i);
+
+    return function (str) {
+      var ret = [];
+      for (var i = 0, j = str.length; i < j; i++) {
+        var c = str.charAt(i);
+        if (mapping.hasOwnProperty(str.charAt(i))) ret.push(mapping[c]);
+        else ret.push(c);
+      }
+      return ret.join("");
+    };
+  })();
   const handleSearch = (text) => {
     setTextInput(text);
     let tempDisplay = [];
     if (text != "") {
       for (let i = 0; i < productsNRestaurants.length; i++) {
-        if (productsNRestaurants[i].name.substr(0, text.length) == text) {
+        if (
+          normalize(
+            productsNRestaurants[i].name.substr(0, text.length).toLowerCase()
+          ) == normalize(text.toLowerCase())
+        ) {
           tempDisplay.push(productsNRestaurants[i]);
         }
       }
@@ -92,58 +116,77 @@ const Buscar_compo = ({ navigation }) => {
   };
   if (display.length > 0) {
     return (
-      <SafeAreaView style={styles.SafeAreaView_}>
-        <View style={styles.searchContainer}>
-          <View style={styles.searchSimulator}>
-            <TextInput style={styles.input} onChangeText={handleSearch} />
-            <MaterialIcons name="search" size={24} color="rgb(100,100,100)" />
-          </View>
-        </View>
-        <View style={styles.scrollContainer}>
-          <ScrollView>
-            <View style={styles.itemsContainer}>
-              {display.map((result) => (
-                <View>{componentFor(result)}</View>
-              ))}
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={styles.SafeAreaView_}>
+          <View style={styles.searchContainer}>
+            <View style={styles.searchSimulator}>
+              <TextInput
+                style={styles.input}
+                onChangeText={handleSearch}
+                clearButtonMode="while-editing"
+              />
+              <MaterialIcons name="search" size={24} color="rgb(100,100,100)" />
             </View>
-          </ScrollView>
-        </View>
-      </SafeAreaView>
+          </View>
+          <View style={styles.scrollContainer}>
+            <ScrollView>
+              <View style={styles.itemsContainer}>
+                {display.map((result) => (
+                  <View>{componentFor(result)}</View>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     );
   } else if (textInput.length > 0 && display.length == 0) {
     return (
-      <SafeAreaView style={styles.SafeAreaView_}>
-        <View style={styles.searchContainer}>
-          <View style={styles.searchSimulator}>
-            <TextInput style={styles.input} onChangeText={handleSearch} />
-            <MaterialIcons name="search" size={24} color="rgb(100,100,100)" />
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={styles.SafeAreaView_}>
+          <View style={styles.searchContainer}>
+            <View style={styles.searchSimulator}>
+              <TextInput
+                style={styles.input}
+                onChangeText={handleSearch}
+                clearButtonMode="while-editing"
+              />
+              <MaterialIcons name="search" size={24} color="rgb(100,100,100)" />
+            </View>
           </View>
-        </View>
-        <View style={styles.contentContainer}>
-          <View style={styles.notFoundContainer}>
-            <Ionicons name="ios-search" size={100} color="rgb(100,100,100)" />
-            <Text
-              style={styles.notFound}
-            >{`No se encontraron resultados para: "${textInput}"`}</Text>
+          <View style={styles.contentContainer}>
+            <View style={styles.notFoundContainer}>
+              <Ionicons name="ios-search" size={100} color="rgb(100,100,100)" />
+              <Text
+                style={styles.notFound}
+              >{`No se encontraron resultados para: "${textInput}"`}</Text>
+            </View>
           </View>
-        </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     );
   } else {
     return (
-      <SafeAreaView style={styles.SafeAreaView_}>
-        <View style={styles.searchContainer}>
-          <View style={styles.searchSimulator}>
-            <TextInput style={styles.input} onChangeText={handleSearch} />
-            <MaterialIcons name="search" size={24} color="rgb(100,100,100)" />
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={styles.SafeAreaView_}>
+          <View style={styles.searchContainer}>
+            <View style={styles.searchSimulator}>
+              <TextInput
+                style={styles.input}
+                onChangeText={handleSearch}
+                clearButtonMode="always"
+                placeholder="Search"
+              />
+              <MaterialIcons name="search" size={24} color="rgb(100,100,100)" />
+            </View>
           </View>
-        </View>
-        <View style={styles.contentContainer}>
-          <View style={styles.notFoundContainer}>
-            <Ionicons name="ios-search" size={100} color="rgb(100,100,100)" />
+          <View style={styles.contentContainer}>
+            <View style={styles.notFoundContainer}>
+              <Ionicons name="ios-search" size={100} color="rgb(100,100,100)" />
+            </View>
           </View>
-        </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     );
   }
 };

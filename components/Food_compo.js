@@ -166,7 +166,10 @@ const Food_compo = ({ navigation, route }) => {
       .doc(userData.id)
       .get()
       .then((user) => {
-        if (user.data().cart.restaurantId == route.params.restaurantId) {
+        if (
+          user.data().cart.restaurantId == route.params.restaurantId ||
+          user.data().cart.restaurantId == ""
+        ) {
           let itemToPush = {
             productName: title,
             productPrice: price,

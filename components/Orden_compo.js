@@ -80,7 +80,7 @@ const Orden_compo = ({ route }) => {
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("Food_compo", {
-                    restaurantId: product.restaurantId,
+                    restaurantId: route.params.order.auxData.restaurantId,
                     foodId: product.productId,
                   });
                 }}

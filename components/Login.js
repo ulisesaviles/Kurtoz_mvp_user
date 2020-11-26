@@ -6,6 +6,8 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import firebase from "../database/database";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -47,37 +49,46 @@ const Login = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.contentContainer}>
-      <View>
-        <Text style={styles.inputTitle}>Correo</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            onChangeText={(text) => {
-              setEmail(text);
-            }}
-            style={styles.input}
-          />
-        </View>
-        <Text style={styles.error}>{error}</Text>
-        <Text style={styles.inputTitle}>Contraseña</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            onChangeText={(text) => {
-              setPassword(text);
-            }}
-            style={styles.input}
-          />
-        </View>
-        <Text style={styles.error}>{error}</Text>
-        <View style={styles.btnsContainer}>
-          <TouchableOpacity onPress={signIn}>
-            <View style={styles.signInContainer}>
-              <Text style={styles.btnTitle}>Iniciar sesión</Text>
-            </View>
-          </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.contentContainer}>
+        <View>
+          <Text style={styles.inputTitle}>Correo</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              onChangeText={(text) => {
+                setEmail(text.toLowerCase());
+              }}
+              style={styles.input}
+              placeholder="alguien@example.com"
+              clearButtonMode="while-editing"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+          <Text style={styles.error}>{error}</Text>
+          <Text style={styles.inputTitle}>Contraseña</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              onChangeText={(text) => {
+                setPassword(text);
+              }}
+              style={styles.input}
+              placeholder="contraseña"
+              clearButtonMode="while-editing"
+              secureTextEntry="true"
+            />
+          </View>
+          <Text style={styles.error}>{error}</Text>
+          <View style={styles.btnsContainer}>
+            <TouchableOpacity onPress={signIn}>
+              <View style={styles.signInContainer}>
+                <Text style={styles.btnTitle}>Iniciar sesión</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

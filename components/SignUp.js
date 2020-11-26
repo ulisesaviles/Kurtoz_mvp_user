@@ -6,6 +6,8 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import firebase from "../database/database";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -123,73 +125,85 @@ const SignUp = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.contentContainer}>
-      <View>
-        <Text style={styles.inputTitle}>Nombre</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            onChangeText={(text) => {
-              setName(text);
-            }}
-            style={styles.input}
-          />
-        </View>
-        <Text style={styles.inputTitle}>Correo</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            onChangeText={(text) => {
-              setEmail(text);
-            }}
-            style={styles.input}
-          />
-        </View>
-        <Text style={styles.inputTitle}>Contraseña</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            onChangeText={(text) => {
-              setPassword(text);
-            }}
-            style={styles.input}
-          />
-        </View>
-        <View style={styles.terminosContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              setCheck(check * -1);
-            }}
-          >
-            <View style={styles.checkContainer}>{componentFor(check)}</View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.termsBtn}
-            onPress={() => {
-              navigation.navigate("Terms");
-            }}
-          >
-            <View>
-              <Text style={styles.heLeido}>He leído y acepto los</Text>
-              <Text style={styles.terms}>términos y condiciones</Text>
-            </View>
-            <Ionicons
-              name="ios-arrow-forward"
-              size={24}
-              color="black"
-              style={styles.btnArrow}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.btnsContainer}>
-          <TouchableOpacity onPress={handlePress}>
-            <View style={styles.signUpContainer}>
-              <Text style={styles.btnTitle}>Crear cuenta</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.contentContainer}>
         <View>
-          <Text style={styles.error}>{error}</Text>
+          <Text style={styles.inputTitle}>Nombre</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              onChangeText={(text) => {
+                setName(text);
+              }}
+              style={styles.input}
+              placeholder="nombre"
+              clearButtonMode="while-editing"
+              autoCapitalize="words"
+            />
+          </View>
+          <Text style={styles.inputTitle}>Correo</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              onChangeText={(text) => {
+                setEmail(text.toLowerCase());
+              }}
+              style={styles.input}
+              placeholder="alguien@example.com"
+              clearButtonMode="while-editing"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+          <Text style={styles.inputTitle}>Contraseña</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              onChangeText={(text) => {
+                setPassword(text);
+              }}
+              style={styles.input}
+              placeholder="contraseña"
+              clearButtonMode="while-editing"
+              secureTextEntry="true"
+            />
+          </View>
+          <View style={styles.terminosContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                setCheck(check * -1);
+              }}
+            >
+              <View style={styles.checkContainer}>{componentFor(check)}</View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.termsBtn}
+              onPress={() => {
+                navigation.navigate("Terms");
+              }}
+            >
+              <View>
+                <Text style={styles.heLeido}>He leído y acepto los</Text>
+                <Text style={styles.terms}>términos y condiciones</Text>
+              </View>
+              <Ionicons
+                name="ios-arrow-forward"
+                size={24}
+                color="black"
+                style={styles.btnArrow}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.btnsContainer}>
+            <TouchableOpacity onPress={handlePress}>
+              <View style={styles.signUpContainer}>
+                <Text style={styles.btnTitle}>Crear cuenta</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <Text style={styles.error}>{error}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
