@@ -166,7 +166,6 @@ const Ordenes_compo = () => {
             {orders.map((order) => (
               <TouchableOpacity
                 onPress={() => {
-                  console.log(order);
                   navigation.navigate("Orden", {
                     order: order,
                   });

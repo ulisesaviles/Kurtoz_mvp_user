@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -70,7 +63,6 @@ function Cart_FoodMini() {
 
 const styles = StyleSheet.create({
   foodMiniContainer: {
-    // backgroundColor: "red",
     width: "90%",
     marginBottom: 2,
     paddingLeft: "3%",
@@ -123,7 +115,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(255, 255, 255)",
   },
   foodMiniDeleteContainer: {
-    // backgroundColor: "blue",
     width: "8%",
     marginLeft: "-3%",
     alignItems: "center",

@@ -34,7 +34,6 @@ const Login = ({ navigation }) => {
       .then((users) => {
         users.forEach(async (user) => {
           if (user.data().email == email && user.data().password == password) {
-            console.log(`Coincide con:\nUser: ${email}\nPassWord: ${password}`);
             await storeData({
               email: email,
               name: user.data().name,

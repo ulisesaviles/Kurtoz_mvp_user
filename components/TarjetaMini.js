@@ -1,14 +1,9 @@
 import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import "react-native-gesture-handler";
-import { MaterialIcons } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 
 function TarjetaMini(props) {
-  const navigation = useNavigation();
-  console.log(props);
-
   function cardBrand() {
     if (props.brand == "mastercard") {
       return (
@@ -44,7 +39,6 @@ function TarjetaMini(props) {
   }
 
   return (
-    // <TouchableOpacity>
     <View style={styles.superContainer}>
       <View style={styles.container}>
         <View style={styles.cardContainer}>
@@ -53,15 +47,9 @@ function TarjetaMini(props) {
             style={styles.cardNumber}
           >{`••••  ••••  ••••  ${props.last4}`}</Text>
         </View>
-        {/* <MaterialIcons
-            name="chevron-right"
-            size={24}
-            color="rgb(100,100,100)"
-          /> */}
       </View>
       <View style={styles.separador} />
     </View>
-    // </TouchableOpacity>
   );
 }
 

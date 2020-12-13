@@ -35,7 +35,6 @@ const Cart_compo = ({ navigation, route }) => {
         if (value !== null) {
           userData = value;
           setUserData_(userData);
-          // console.log(value);
         }
       } catch (e) {
         console.log(e);
@@ -83,7 +82,6 @@ const Cart_compo = ({ navigation, route }) => {
       });
   }
   async function completeOrder() {
-    ///////////////////////////////////////////////
     let userHasPaymentMethods = false;
     await firebase
       .firestore()
@@ -105,11 +103,9 @@ const Cart_compo = ({ navigation, route }) => {
           setOpen(restaurant.data().open);
           let open_ = restaurant.data().open;
           if (open_ == true) {
-            // let today = new Date();
-            // today = today.getTime();
             let order = {
               createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-              products: cart, // Quitarle la data del restaurant a cada producto por ser duplicada
+              products: cart,
               type: "active",
               total: total,
               user: {
@@ -131,78 +127,12 @@ const Cart_compo = ({ navigation, route }) => {
               });
             }
             order.products = temp;
-            // console.log(order);
             navigation.navigate("Pay", {
               order: order,
               restaurantId: restaurantId,
               restaurantName: restaurantName,
               restaurantImg: restaurantImg,
             });
-            // let userOrder = {
-            //   date: today,
-            //   products: cart,
-            //   restaurantId: restaurantId,
-            //   restaurantName: restaurantName,
-            //   restaurantImg: restaurantImg,
-            //   type: "active",
-            //   total: total,
-            // };
-            // let restaurantCart = [];
-            // let product;
-            // for (let i = 0; i < cart.length; i++) {
-            //   product = cart[i];
-            //   // console.log(product);
-            //   let modifiers = [];
-            //   for (let j = 0; j < product.modifires.length; j++) {
-            //     modifiers.push({
-            //       id: product.modifires[j].id,
-            //       quantity: 1,
-            //     });
-            //   }
-            //   let restaurantProduct = {
-            //     quantity: product.cuantity,
-            //     id: product.productId,
-            //     variant: product.variantIndex,
-            //     modifiers: modifiers,
-            //   };
-            //   restaurantCart.push(restaurantProduct);
-            // }
-            // let restaurantOrder = {
-            //   type: "active",
-            //   total: total,
-            //   user: {
-            //     name: userData_.name,
-            //     id: userData_.id,
-            //   },
-            //   createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-            //   products: restaurantCart,
-            // };
-
-            //////////////////////////////////////////////////////////////////////
-
-            // await firebase
-            //   .firestore()
-            //   .collection("restaurants")
-            //   .doc(restaurantId)
-            //   .collection("orders")
-            //   .add(order);
-
-            // await firebase
-            //   .firestore()
-            //   .collection("users")
-            //   .doc(userData_.id)
-            //   .collection("orders")
-            //   .add(userOrder);
-
-            // navigation.navigate("Pay", {
-            //   // restaurantOrder: restaurantOrder,
-            //   // userOrder: userOrder,
-            //   order: order,
-            //   restaurantId: restaurantId,
-            // });
-
-            // setRestaurantId(" -");
-            // updateCart([]);
           } else {
             Alert.alert(
               `${restaurantName} se encuentra cerrado`,
@@ -210,7 +140,7 @@ const Cart_compo = ({ navigation, route }) => {
               [
                 {
                   text: "OK",
-                  onPress: () => console.log("OK Pressed"),
+                  onPress: () => {},
                 },
               ],
               { cancelable: false }
@@ -228,7 +158,7 @@ const Cart_compo = ({ navigation, route }) => {
           },
           {
             text: "Más tarde",
-            onPress: () => console.log("OK Pressed"),
+            onPress: () => {},
             style: "cancel",
           },
         ],
@@ -253,7 +183,6 @@ const Cart_compo = ({ navigation, route }) => {
         <View style={styles.container}>
           <View style={styles.scrollContainer}>
             <ScrollView>
-              {/* <DeliveryDetails /> */}
               <View style={styles.itemsContainer}>
                 <View style={styles.restaurantNameContainer}>
                   <Text style={styles.restaurantName}>{restaurantName}</Text>
@@ -433,7 +362,6 @@ const styles = StyleSheet.create({
     fontWeight: "300",
   },
   foodMiniContainer: {
-    // backgroundColor: "red",
     width: "90%",
     marginBottom: 2,
     paddingLeft: "3%",
@@ -490,7 +418,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   foodMiniDeleteContainer: {
-    // backgroundColor: "blue",
     width: "8%",
     marginLeft: "-3%",
     alignItems: "center",

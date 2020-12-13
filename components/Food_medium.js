@@ -4,7 +4,6 @@ import { useNavigation } from "@react-navigation/native";
 import firebase from "../database/database";
 
 function Food_medium(props) {
-  //Necesito recibir como prop el id y nombre del restaurant
   const navigation = useNavigation();
   const [title, setTitle] = useState(" - - - ");
   const [restaurant, setRestaurant] = useState(" - - ");
@@ -67,9 +66,7 @@ function Food_medium(props) {
       <View style={styles.container}>
         <Image
           source={{
-            uri:
-              // "https://scontent.ftij1-1.fna.fbcdn.net/v/t1.0-9/27858576_172626690015090_2321536906365458293_n.jpg?_nc_cat=106&_nc_sid=8bfeb9&_nc_eui2=AeE6-6KCW8trFvQxazSM4QEVvUI5v6I1YP29Qjm_ojVg_YDtO5jdy0dbUu7-EY1U01jsEj6eEsAMtg1vNlDi0orZ&_nc_ohc=DCKP55MdsHUAX9BGKN1&_nc_ht=scontent.ftij1-1.fna&oh=1269804a0024db38e16ba82f993fb37a&oe=5F814571",
-              `${img}`,
+            uri: `${img}`,
           }}
           style={styles.photo}
         />

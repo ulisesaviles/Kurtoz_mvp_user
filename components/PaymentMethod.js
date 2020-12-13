@@ -1,11 +1,9 @@
-import { NavigationContainer } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
 } from "react-native";
 import TarjetaMini from "./TarjetaMini";
@@ -17,9 +15,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 const Ordenes_compo = () => {
   let userData;
-  const [userData_, setUserData_] = useState("");
   const [gotUser, setGotUser] = useState(false);
-  const [successfullyAdded, setSuccessfullyAdded] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState([]);
 
   async function getUser() {
@@ -30,7 +26,6 @@ const Ordenes_compo = () => {
         value = JSON.parse(value);
         if (value !== null) {
           userData = value;
-          setUserData_(userData);
           getPayments(userData.id);
         }
       } catch (e) {
@@ -47,7 +42,6 @@ const Ordenes_compo = () => {
       .doc(userId)
       .onSnapshot((user) => {
         setPaymentMethods(user.data().paymentMethods.data);
-        console.log(user.data().paymentMethods.data);
       });
   }
   const navigation = useNavigation();

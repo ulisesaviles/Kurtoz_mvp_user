@@ -11,8 +11,6 @@ import HomeHorizontalScroll from "./HomeHorizontalScroll";
 import firebase from "../database/database";
 
 const Home_compo = ({ navigation }) => {
-  let kurtozId = "tpiauGjqb5yg1bA7qJmm";
-
   const [categories, setCategories] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
   const onRefresh = React.useCallback(() => {
@@ -25,7 +23,6 @@ const Home_compo = ({ navigation }) => {
 
     wait(500).then(() => {
       setRefreshing(false);
-      // setContent(theContent2);
     });
   }, [refreshing]);
 

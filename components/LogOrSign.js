@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 import "react-native-gesture-handler";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 
 const LogOrSign = ({ navigation }) => {
@@ -27,7 +21,7 @@ const LogOrSign = ({ navigation }) => {
       try {
         let value = await AsyncStorage.getItem("userData");
         userData = JSON.parse(value);
-        console.log(userData.id);
+        console.log(userData);
         if (userData.id.length > 0) {
           navigation.navigate("Root");
         }

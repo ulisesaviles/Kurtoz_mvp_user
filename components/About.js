@@ -25,7 +25,7 @@ const About = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.goBackContainer}>
-          <GoBackBtn style={styles.goBack} />
+          <GoBackBtn />
         </View>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.header}>Acerca del app</Text>
@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
     backgroundColor: "rgb(240,240,240)",
-    // justifyContent: "space-around",
   },
   headerContainer: {
     flexDirection: "row",

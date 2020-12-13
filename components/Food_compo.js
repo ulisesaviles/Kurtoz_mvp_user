@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity,
   ScrollView,
   ImageBackground,
@@ -28,8 +27,6 @@ const Food_compo = ({ navigation, route }) => {
   const [img, setImg] = useState(
     "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif"
   );
-  // const [modifiers, setModifiers] = useState([]);
-  // const [booleanModifiers, setBooleanModifires] = useState([]);
   const [modifierGroups, setModifierGroups] = useState([]);
   const [booleanModifierGroups, setBooleanModifierGroups] = useState([[]]);
   const [variants, setVariants] = useState([]);
@@ -84,7 +81,6 @@ const Food_compo = ({ navigation, route }) => {
     if (
       title == " - - -" &&
       img == "https://thumbs.gfycat.com/CompleteZanyIlsamochadegu-small.gif" &&
-      // modifiers.length == 0 &&
       description == " - - - - - - - - - - - - - - - - - - -\n - - -" &&
       gotUser == false
     ) {
@@ -110,7 +106,6 @@ const Food_compo = ({ navigation, route }) => {
           setVariants(variants);
           setVariant(variants[0].name);
           setModifierGroups(product.data().modifierGroups);
-          // console.log(product.data().modifierGroups);
           for (let i = 0; i < product.data().modifierGroups.length; i++) {
             if (i != 0) {
               booleanModifierGroups.push([]);
@@ -124,22 +119,11 @@ const Food_compo = ({ navigation, route }) => {
             }
           }
           setBooleanModifierGroups(booleanModifierGroups);
-          console.log(booleanModifierGroups);
           update(" ");
-          // for (let i = 0; i < product.data().modifiers.length; i++) {
-          //   modifiers.push(product.data().modifiers[i]);
-          // }
-          // setModifiers(modifiers);
-          // getModifires(restaurantId, productId);
         })
         .catch((err) => {
           console.log("Error getting documents", err);
         });
-      // console.log(booleanModifierGroups);
-      // for (let i = 0; i < modifiers.length; i++) {
-      //   booleanModifiers.push(-1);
-      // }
-      // setBooleanModifires(booleanModifiers);
     }
   }
 
@@ -160,7 +144,6 @@ const Food_compo = ({ navigation, route }) => {
   }
 
   async function pushCart() {
-    // route.params.restaurantId
     await firebase
       .firestore()
       .collection("users")
@@ -221,7 +204,6 @@ const Food_compo = ({ navigation, route }) => {
               }
             }
           }
-          console.log(itemToPush);
           getCurrentCart(itemToPush);
         } else {
           Alert.alert(
@@ -261,13 +243,11 @@ const Food_compo = ({ navigation, route }) => {
         { merge: true }
       )
       .then((res) => {
-        // navigation.navigate("Cart", { needUpdate: true, hola: "hola" });
         navigation.navigate("Cart");
       });
   }
 
   function modifiers() {
-    console.log(booleanModifierGroups);
     if (booleanModifierGroups[0].length != 0) {
       return modifierGroups.map((modifierGroup) => (
         <View style={styles.modifierGroupContainer}>
@@ -322,30 +302,6 @@ const Food_compo = ({ navigation, route }) => {
     }
   }
 
-  // async function getModifires(restaurantId) {
-  //   for (let i = 0; i < modifiers.length; i++) {
-  //     await firebase
-  //       .firestore()
-  //       .collection("restaurants")
-  //       .doc(restaurantId)
-  //       .collection("modifiers")
-  //       .doc(modifiers[i])
-  //       .get()
-  //       .then((modifier) => {
-  //         modifiers[i] = {
-  //           id: modifier.id,
-  //           name: modifier.data().name,
-  //           price: modifier.data().price,
-  //         };
-  //       })
-  //       .catch((err) => {
-  //         console.log("Error getting documents", err);
-  //       });
-  //     setModifiers(modifiers);
-  //   }
-  //   update(" ");
-  // }
-
   return (
     <View>
       <View style={styles.scrollContainer}>
@@ -398,43 +354,7 @@ const Food_compo = ({ navigation, route }) => {
               </View>
             ))}
           </View>
-          {/* <View style={styles.opcionesContainer}>
-            <Text style={styles.opciones}>Extras</Text>
-          </View> */}
-          <View>
-            {/* {modifiers.map((modifier) => (
-              <View style={styles.optionContainer}>
-                <TouchableOpacity
-                  onPress={() => {
-                    booleanModifiers[modifiers.indexOf(modifier)] =
-                      booleanModifiers[modifiers.indexOf(modifier)] * -1;
-                    setBooleanModifires(booleanModifiers);
-                    if (booleanModifiers[modifiers.indexOf(modifier)] == 1) {
-                      setModifiersPrice(modifiersPrice + modifier.price);
-                    } else {
-                      setModifiersPrice(modifiersPrice - modifier.price);
-                    }
-                    update(`${booleanModifiers}`);
-                  }}
-                >
-                  <MaterialIcons
-                    name={iconFor(
-                      booleanModifiers[modifiers.indexOf(modifier)]
-                    )}
-                    size={26}
-                    color="black"
-                  />
-                </TouchableOpacity>
-                <View style={styles.optionTextContainer}>
-                  <Text style={styles.optionText}>{modifier.name}</Text>
-                  <Text
-                    style={styles.optionPrice}
-                  >{` + $ ${modifier.price}.00 MXN`}</Text>
-                </View>
-              </View>
-            ))} */}
-            {modifiers()}
-          </View>
+          <View>{modifiers()}</View>
           <View style={styles.cuantityContainer}>
             <TouchableOpacity
               onPress={() => {
@@ -462,7 +382,6 @@ const Food_compo = ({ navigation, route }) => {
           <TouchableOpacity
             onPress={() => {
               pushCart();
-              // navigation.navigate("Carrito");
             }}
           >
             <View style={styles.addToCartBtn}>
@@ -512,7 +431,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(255, 255, 255)",
     padding: 20,
     flexDirection: "row",
-    // backgroundColor: "red",
   },
   modifierGroupContainer: {
     backgroundColor: "rgb(255, 255, 255)",
@@ -553,7 +471,6 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: "row",
     justifyContent: "space-between",
-    // backgroundColor: "red",
   },
   optionText: {
     fontSize: 20,

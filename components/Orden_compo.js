@@ -102,14 +102,6 @@ const Orden_compo = ({ route }) => {
                     </View>
                     <View style={styles.foodMiniExtraIngredients}>
                       {product.modifierGroups.map((modifierGroup) => (
-                        // <View style={styles.foodMiniExtraIngredientContainer}>
-                        //   <Text style={styles.extraPrice}>
-                        //     {`+ $${modifier.price}.00 MXN`}
-                        //   </Text>
-                        //   <Text style={styles.foodMiniExtraIngredient}>
-                        //     {modifier.name}
-                        //   </Text>
-                        // </View>
                         <>
                           <Text style={styles.variant}>
                             {`• ${modifierGroup.name}:`}

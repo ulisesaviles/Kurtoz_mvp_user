@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
     backgroundColor: "rgb(240,240,240)",
-    // justifyContent: "space-around",
   },
   headerContainer: {
     flexDirection: "row",

@@ -13,7 +13,6 @@ import firebase from "../database/database";
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
 import { MaterialIcons } from "@expo/vector-icons";
-import RestaurantLogo_touchable from "./RestaurantLogo_touchable";
 import { Ionicons } from "@expo/vector-icons";
 
 const SignUp = ({ navigation }) => {
@@ -22,9 +21,7 @@ const SignUp = ({ navigation }) => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   async function storeData(value) {
-    console.log(value);
     try {
-      // const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem("userData", value);
     } catch (e) {
       console.log(e);
@@ -109,7 +106,6 @@ const SignUp = ({ navigation }) => {
         }
       }
     } else {
-      console.log(email);
       setError("Ingresa una dirección de correo válida");
     }
   }

@@ -54,12 +54,10 @@ const Pay = ({ navigation, route }) => {
           tempArray.push(false);
         }
         setBooleanPayments(tempArray);
-        // console.log(user.data().paymentMethods.data);
       });
   }
 
   async function handlePayment(userId) {
-    // console.log(route.params);
     setPaymentState("loading");
     try {
       await axios({
@@ -72,7 +70,6 @@ const Pay = ({ navigation, route }) => {
           paymentIndex: booleanPayments.indexOf(true),
         },
       }).then(async (response) => {
-        console.log(`RestaurantId: ${route.params.restaurantId}`);
         if (response.status == 200) {
           setPaymentState("success");
           await firebase
@@ -94,7 +91,6 @@ const Pay = ({ navigation, route }) => {
                     .data()
                     .createdAt.isEqual(route.params.order.createdAt)
                 ) {
-                  console.log(`${userId} order has been foud`);
                   await firebase
                     .firestore()
                     .collection("users")

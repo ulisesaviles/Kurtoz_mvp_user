@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
@@ -190,7 +189,6 @@ const styles = StyleSheet.create({
     margin: "8%",
   },
   profileTextContainer: {
-    // backgroundColor: "red",
     justifyContent: "center",
     margin: "-10%",
   },

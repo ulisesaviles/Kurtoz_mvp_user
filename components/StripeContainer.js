@@ -30,7 +30,6 @@ const StripeContainer = (props) => {
         if (value !== null) {
           userData = value;
           setUserData_(userData);
-          console.log(userData);
         }
       } catch (e) {
         console.log(e);
@@ -41,7 +40,6 @@ const StripeContainer = (props) => {
 
   async function savePaymentMethod(message) {
     let token = JSON.parse(message.nativeEvent.data);
-    console.log(token);
     setLoading(true);
     try {
       await axios({
@@ -53,7 +51,6 @@ const StripeContainer = (props) => {
           token: token,
         },
       }).then(async (response) => {
-        console.log(response);
         setLoading(false);
         if (response.status == 200) {
           setSuccessfullyAdded(true);
@@ -306,35 +303,10 @@ const StripeContainer = (props) => {
                 form.addEventListener("submit", async function (event) {
                   event.preventDefault();
                   
-                  // location.reload()
-                  // console.log(token);
                   const token = await stripe.createToken(card);
                   window.ReactNativeWebView.postMessage(JSON.stringify(token));
-                  // axios({
-                  //   url: "https://us-central1-food-delivery-app-86ccd.cloudfunctions.net/createPaymentMetod",
-                  //   method: "POST",
-                  //   data: {
-                  //     userId: "M97HqZEoJWtJygYQGXNL",
-                  //     token: token,
-                  //   }
-                  // }).then((Response) => {
-                  //   console.log(Response);
-                  // });
                   
                 });
-      
-                // Submit the form with the token ID.
-                function successHandler(token) {
-                  // // Insert the token ID into the form so it gets submitted to the server
-                  // var form = document.getElementById("payment-form");
-                  // var hiddenInput = document.createElement("input");
-                  // hiddenInput.setAttribute("type", "hidden");
-                  // hiddenInput.setAttribute("name", "stripeToken");
-                  // hiddenInput.setAttribute("value", token.id);
-                  // form.appendChild(hiddenInput);
-                  // // Submit the form
-                  // form.submit();
-                }
                 
               </script>
         </body>`,

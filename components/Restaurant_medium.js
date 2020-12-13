@@ -66,7 +66,6 @@ function Restaurant_medium(props) {
         });
     }
   }
-  console.log(open);
   if (open == true) {
     return (
       <TouchableOpacity
