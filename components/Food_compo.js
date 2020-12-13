@@ -110,7 +110,7 @@ const Food_compo = ({ navigation, route }) => {
           setVariants(variants);
           setVariant(variants[0].name);
           setModifierGroups(product.data().modifierGroups);
-          console.log(product.data().modifierGroups);
+          // console.log(product.data().modifierGroups);
           for (let i = 0; i < product.data().modifierGroups.length; i++) {
             if (i != 0) {
               booleanModifierGroups.push([]);
@@ -124,6 +124,7 @@ const Food_compo = ({ navigation, route }) => {
             }
           }
           setBooleanModifierGroups(booleanModifierGroups);
+          console.log(booleanModifierGroups);
           update(" ");
           // for (let i = 0; i < product.data().modifiers.length; i++) {
           //   modifiers.push(product.data().modifiers[i]);
@@ -134,7 +135,7 @@ const Food_compo = ({ navigation, route }) => {
         .catch((err) => {
           console.log("Error getting documents", err);
         });
-      console.log(booleanModifierGroups);
+      // console.log(booleanModifierGroups);
       // for (let i = 0; i < modifiers.length; i++) {
       //   booleanModifiers.push(-1);
       // }
@@ -265,6 +266,62 @@ const Food_compo = ({ navigation, route }) => {
       });
   }
 
+  function modifiers() {
+    console.log(booleanModifierGroups);
+    if (booleanModifierGroups[0].length != 0) {
+      return modifierGroups.map((modifierGroup) => (
+        <View style={styles.modifierGroupContainer}>
+          <View style={styles.modifierGroupNameContainer}>
+            <Text style={styles.modifierGroupName}>{modifierGroup.name}</Text>
+            <Text
+              style={styles.description}
+            >{`Elige hasta ${modifierGroup.maxSelection}`}</Text>
+          </View>
+          {modifierGroup.modifiers.map((modifier) => (
+            <View style={styles.optionContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  booleanModifierGroups[modifierGroups.indexOf(modifierGroup)][
+                    modifierGroup.modifiers.indexOf(modifier)
+                  ] *= -1;
+                  setBooleanModifierGroups(booleanModifierGroups);
+                  if (
+                    booleanModifierGroups[
+                      modifierGroups.indexOf(modifierGroup)
+                    ][modifierGroup.modifiers.indexOf(modifier)] == 1
+                  ) {
+                    setModifiersPrice(modifiersPrice + modifier.price);
+                  } else {
+                    setModifiersPrice(modifiersPrice - modifier.price);
+                  }
+                  update(`${booleanModifierGroups}`);
+                }}
+              >
+                <MaterialIcons
+                  name={iconFor(
+                    booleanModifierGroups[
+                      modifierGroups.indexOf(modifierGroup)
+                    ][modifierGroup.modifiers.indexOf(modifier)]
+                  )}
+                  size={26}
+                  color="black"
+                />
+              </TouchableOpacity>
+              <View style={styles.optionTextContainer}>
+                <Text style={styles.optionText}>{modifier.name}</Text>
+                <Text
+                  style={styles.optionPrice}
+                >{` + $ ${modifier.price}.00 MXN`}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      ));
+    } else {
+      return;
+    }
+  }
+
   // async function getModifires(restaurantId) {
   //   for (let i = 0; i < modifiers.length; i++) {
   //     await firebase
@@ -376,56 +433,7 @@ const Food_compo = ({ navigation, route }) => {
                 </View>
               </View>
             ))} */}
-            {modifierGroups.map((modifierGroup) => (
-              <View style={styles.modifierGroupContainer}>
-                <View style={styles.modifierGroupNameContainer}>
-                  <Text style={styles.modifierGroupName}>
-                    {modifierGroup.question}
-                  </Text>
-                  <Text
-                    style={styles.description}
-                  >{`Elige hasta ${modifierGroup.maxSelection}`}</Text>
-                </View>
-                {modifierGroup.modifiers.map((modifier) => (
-                  <View style={styles.optionContainer}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        booleanModifierGroups[
-                          modifierGroups.indexOf(modifierGroup)
-                        ][modifierGroup.modifiers.indexOf(modifier)] *= -1;
-                        setBooleanModifierGroups(booleanModifierGroups);
-                        if (
-                          booleanModifierGroups[
-                            modifierGroups.indexOf(modifierGroup)
-                          ][modifierGroup.modifiers.indexOf(modifier)] == 1
-                        ) {
-                          setModifiersPrice(modifiersPrice + modifier.price);
-                        } else {
-                          setModifiersPrice(modifiersPrice - modifier.price);
-                        }
-                        update(`${booleanModifierGroups}`);
-                      }}
-                    >
-                      <MaterialIcons
-                        name={iconFor(
-                          booleanModifierGroups[
-                            modifierGroups.indexOf(modifierGroup)
-                          ][modifierGroup.modifiers.indexOf(modifier)]
-                        )}
-                        size={26}
-                        color="black"
-                      />
-                    </TouchableOpacity>
-                    <View style={styles.optionTextContainer}>
-                      <Text style={styles.optionText}>{modifier.name}</Text>
-                      <Text
-                        style={styles.optionPrice}
-                      >{` + $ ${modifier.price}.00 MXN`}</Text>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            ))}
+            {modifiers()}
           </View>
           <View style={styles.cuantityContainer}>
             <TouchableOpacity

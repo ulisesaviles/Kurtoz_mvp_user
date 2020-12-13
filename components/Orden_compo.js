@@ -130,7 +130,7 @@ const Orden_compo = ({ route }) => {
                       ))}
                     </View>
                     <Text style={styles.foodMiniPrice}>
-                      {`$ ${product.productPrice}.00 MXN`}
+                      {`$ ${product.price}.00 MXN`}
                     </Text>
                   </View>
                   <Image
@@ -275,6 +275,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   ScrollView: {},
+  variant: {
+    width: "90%",
+  },
 });
 
 export default Orden_compo;
